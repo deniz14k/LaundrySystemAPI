@@ -1,0 +1,19 @@
+﻿using AplicatieSpalatorie.Models;
+using System.Text.Json.Serialization;
+
+
+public class Item
+{
+    public int Id { get; set; }
+
+    public string Type { get; set; } = "Carpet";
+
+    public double Price { get; set; }
+
+    public double? Length { get; set; }  // nullable for blankets
+    public double? Width { get; set; }
+
+    public int OrderId { get; set; }
+
+    [JsonIgnore] public Order? Order { get; set; } = null!;
+}
