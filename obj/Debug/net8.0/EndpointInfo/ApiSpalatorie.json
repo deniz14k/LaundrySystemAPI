@@ -365,6 +365,10 @@
             "type": "string",
             "nullable": true
           },
+          "deliveryAddress": {
+            "type": "string",
+            "nullable": true
+          },
           "items": {
             "type": "array",
             "items": {

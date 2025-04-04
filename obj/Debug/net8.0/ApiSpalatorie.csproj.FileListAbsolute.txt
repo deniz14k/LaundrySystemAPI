@@ -144,4 +144,5 @@ C:\Users\deniz\source\repos\ApiSpalatorie\bin\Debug\net8.0\ru\Microsoft.CodeAnal
 C:\Users\deniz\source\repos\ApiSpalatorie\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\deniz\source\repos\ApiSpalatorie\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\deniz\source\repos\ApiSpalatorie\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\deniz\source\repos\ApiSpalatorie\obj\Debug\net8.0\ApiSpalatorie.sourcelink.json
 C:\Users\deniz\source\repos\ApiSpalatorie\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

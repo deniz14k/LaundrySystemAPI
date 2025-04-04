@@ -37,6 +37,9 @@ namespace ApiSpalatorie.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeliveryAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
 

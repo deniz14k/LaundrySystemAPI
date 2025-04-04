@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiSpalatorie.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250403122143_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250404111232_AddDeliveryAddres")]
+    partial class AddDeliveryAddres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,9 @@ namespace ApiSpalatorie.Migrations
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeliveryAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ReceivedDate")

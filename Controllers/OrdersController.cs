@@ -88,6 +88,13 @@ namespace AplicatieSpalatorie.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Enforce address if needed
+            if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
+            {
+                ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
+                return BadRequest(ModelState);
+            }
+
             // Price logic for each item
             foreach (var item in order.Items)
             {
@@ -130,10 +137,17 @@ namespace AplicatieSpalatorie.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Find the existing order in DB
+            // Enforce address if needed
+            if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
+            {
+                ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
+                return BadRequest(ModelState);
+            }
+
+            // Find the existing order in the DB with its Items
             var existingOrder = await _context.Orders
-                                              .Include(o => o.Items)
-                                              .FirstOrDefaultAsync(o => o.Id == id);
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
             if (existingOrder == null)
             {
@@ -146,46 +160,83 @@ namespace AplicatieSpalatorie.Api.Controllers
             existingOrder.ReceivedDate = order.ReceivedDate;
             existingOrder.Status = order.Status;
             existingOrder.ServiceType = order.ServiceType;
+            existingOrder.DeliveryAddress = order.DeliveryAddress;
 
-            // If status is "Ready" and CompletedDate not set, set it
             if (order.Status == "Ready" && existingOrder.CompletedDate == null)
             {
                 existingOrder.CompletedDate = DateTime.Now;
             }
             else if (order.Status != "Ready")
             {
-                // If not ready, remove completed date? Up to you.
                 existingOrder.CompletedDate = null;
             }
 
-            // Clear old items, add new items from request
-            existingOrder.Items.Clear();
-            foreach (var item in order.Items)
+            // ----- Update the Items collection in a granular way -----
+            // Identify incoming item IDs (existing items will have non-zero IDs)
+            var incomingItemIds = order.Items.Select(i => i.Id).Where(id => id != 0).ToList();
+
+            // Remove items that exist in DB but are not present in the incoming list
+            var itemsToRemove = existingOrder.Items
+                .Where(i => i.Id != 0 && !incomingItemIds.Contains(i.Id))
+                .ToList();
+            foreach (var item in itemsToRemove)
             {
-                existingOrder.Items.Add(item);
+                _context.Items.Remove(item);
             }
 
-            // Recalculate prices
-            foreach (var item in existingOrder.Items)
+            // Process each incoming item
+            foreach (var incomingItem in order.Items)
             {
-                if (item.Type == "Blanket")
+                // If the item already exists, update its properties
+                var existingItem = existingOrder.Items.FirstOrDefault(i => i.Id == incomingItem.Id);
+                if (existingItem != null)
                 {
-                    item.Price = 50;
-                    item.Length = null;
-                    item.Width = null;
+                    existingItem.Type = incomingItem.Type;
+                    existingItem.Length = incomingItem.Length;
+                    existingItem.Width = incomingItem.Width;
+
+                    // Recalculate price
+                    if (existingItem.Type == "Blanket")
+                    {
+                        existingItem.Price = 50;
+                        existingItem.Length = null;
+                        existingItem.Width = null;
+                    }
+                    else if (existingItem.Type == "Carpet" && existingItem.Length.HasValue && existingItem.Width.HasValue)
+                    {
+                        var baseRate = (existingOrder.ServiceType == "PickupDelivery") ? 17 : 15;
+                        existingItem.Price = existingItem.Length.Value * existingItem.Width.Value * baseRate;
+                    }
                 }
-                else if (item.Type == "Carpet" && item.Length.HasValue && item.Width.HasValue)
+                else
                 {
-                    var baseRate = (existingOrder.ServiceType == "PickupDelivery") ? 17 : 15;
-                    item.Price = item.Length.Value * item.Width.Value * baseRate;
+                    // New item: add it to the order
+                    var newItem = new Item
+                    {
+                        Type = incomingItem.Type,
+                        Length = incomingItem.Length,
+                        Width = incomingItem.Width
+                    };
+
+                    // Calculate price for the new item
+                    if (newItem.Type == "Blanket")
+                    {
+                        newItem.Price = 50;
+                    }
+                    else if (newItem.Type == "Carpet" && newItem.Length.HasValue && newItem.Width.HasValue)
+                    {
+                        var baseRate = (existingOrder.ServiceType == "PickupDelivery") ? 17 : 15;
+                        newItem.Price = newItem.Length.Value * newItem.Width.Value * baseRate;
+                    }
+                    existingOrder.Items.Add(newItem);
                 }
             }
+            // --------------------------------------------------------
 
             await _context.SaveChangesAsync();
-
-            // 204 No Content or 200 OK (depending on your preference)
             return NoContent();
         }
+
 
         // --------------------------------------------------------------
         // 5) DELETE: api/orders/5

@@ -7,6 +7,7 @@ namespace AplicatieSpalatorie.Models
 {
     public class Order
     {
+        
         public int Id { get; set; }
 
         public string CustomerId { get; set; } = "";
@@ -15,8 +16,9 @@ namespace AplicatieSpalatorie.Models
 
         public DateTime ReceivedDate { get; set; } = DateTime.Now;
 
-        public string? ServiceType { get; set; } 
+        public string? ServiceType { get; set; }
 
+        public string? DeliveryAddress { get; set; }
         public List<Item> Items { get; set; } = new List<Item>();
 
         [Required]
