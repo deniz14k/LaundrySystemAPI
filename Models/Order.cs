@@ -18,6 +18,9 @@ namespace AplicatieSpalatorie.Models
 
         public string? ServiceType { get; set; }
 
+        public string? Observation { get; set; }
+
+
         public string? DeliveryAddress { get; set; }
         public List<Item> Items { get; set; } = new List<Item>();
 

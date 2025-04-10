@@ -16,10 +16,8 @@ namespace AplicatieSpalatorie.Api.Controllers
             _context = context;
         }
 
-        // --------------------------------------------------------------
-        // 1) GET: api/orders?searchTerm=...&fromDate=...&toDate=...&status=...
-        //    Returns all orders, optionally filtered by search/date/status.
-        // --------------------------------------------------------------
+    
+        // returns orders, can be filtered by search, date, or status.
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(
             [FromQuery] string? searchTerm,
@@ -30,7 +28,7 @@ namespace AplicatieSpalatorie.Api.Controllers
             IQueryable<Order> query = _context.Orders
                                               .Include(o => o.Items);
 
-            // (A) Apply filters if provided
+            // if we have filters applied
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query = query.Where(o => o.CustomerId.Contains(searchTerm) ||
@@ -49,15 +47,12 @@ namespace AplicatieSpalatorie.Api.Controllers
                 query = query.Where(o => o.Status == status);
             }
 
-            // (B) Execute query, return JSON
+            // we execute the query and then return a json
             var orders = await query.ToListAsync();
             return Ok(orders);
         }
 
-        // --------------------------------------------------------------
-        // 2) GET: api/orders/5
-        //    Returns details for a single order by ID
-        // --------------------------------------------------------------
+        // this get method returns an order by a given id
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
@@ -67,35 +62,30 @@ namespace AplicatieSpalatorie.Api.Controllers
 
             if (order == null)
             {
-                return NotFound(); // 404
+                return NotFound(); 
             }
 
-            return Ok(order); // 200 + Order data in JSON
+            return Ok(order); 
         }
 
-        // --------------------------------------------------------------
-        // 3) POST: api/orders
-        //    Creates a new Order. We replicate your "Create" method logic:
-        //    - Price calculations for Blanket/Carpet
-        //    - Setting default data, etc.
-        // --------------------------------------------------------------
+        // method for creating a new order.
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
         {
-            // Validate incoming model
+            // validation
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Enforce address if needed
+            // address needed if pickup delivery order
             if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
             {
                 ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
                 return BadRequest(ModelState);
             }
 
-            // Price logic for each item
+            // prices for items
             foreach (var item in order.Items)
             {
                 if (item.Type == "Blanket")
@@ -114,17 +104,11 @@ namespace AplicatieSpalatorie.Api.Controllers
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // Return 201 + the newly created resource
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 
-        // --------------------------------------------------------------
-        // 4) PUT: api/orders/5
-        //    Updates an existing Order. We replicate your "Edit" logic:
-        //    - Recalculate item prices
-        //    - Clear existing items, add new ones
-        //    - Set CompletedDate if status is "Ready"
-        // --------------------------------------------------------------
+     
+        // This method updates an existing order. We can add or remove items, change statuses etc
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
         {
@@ -137,14 +121,14 @@ namespace AplicatieSpalatorie.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Enforce address if needed
+            // if we need address(only for pickup delivery orders)
             if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
             {
                 ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
                 return BadRequest(ModelState);
             }
 
-            // Find the existing order in the DB with its Items
+            // find the existing order in database
             var existingOrder = await _context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id);
@@ -154,13 +138,15 @@ namespace AplicatieSpalatorie.Api.Controllers
                 return NotFound();
             }
 
-            // Update scalar properties
+            // update properties
             existingOrder.CustomerId = order.CustomerId;
             existingOrder.TelephoneNumber = order.TelephoneNumber;
             existingOrder.ReceivedDate = order.ReceivedDate;
             existingOrder.Status = order.Status;
             existingOrder.ServiceType = order.ServiceType;
             existingOrder.DeliveryAddress = order.DeliveryAddress;
+            existingOrder.Observation = order.Observation;
+
 
             if (order.Status == "Ready" && existingOrder.CompletedDate == null)
             {
@@ -171,11 +157,13 @@ namespace AplicatieSpalatorie.Api.Controllers
                 existingOrder.CompletedDate = null;
             }
 
-            // ----- Update the Items collection in a granular way -----
-            // Identify incoming item IDs (existing items will have non-zero IDs)
+            // we update the items
+            
             var incomingItemIds = order.Items.Select(i => i.Id).Where(id => id != 0).ToList();
 
-            // Remove items that exist in DB but are not present in the incoming list
+
+            // we remove items that are not in the incoming list and have an ID != 0
+            // (meaning they are already in the database)
             var itemsToRemove = existingOrder.Items
                 .Where(i => i.Id != 0 && !incomingItemIds.Contains(i.Id))
                 .ToList();
@@ -184,10 +172,10 @@ namespace AplicatieSpalatorie.Api.Controllers
                 _context.Items.Remove(item);
             }
 
-            // Process each incoming item
+            // process each item
             foreach (var incomingItem in order.Items)
             {
-                // If the item already exists, update its properties
+                // if the item has an ID, we update it
                 var existingItem = existingOrder.Items.FirstOrDefault(i => i.Id == incomingItem.Id);
                 if (existingItem != null)
                 {
@@ -195,7 +183,7 @@ namespace AplicatieSpalatorie.Api.Controllers
                     existingItem.Length = incomingItem.Length;
                     existingItem.Width = incomingItem.Width;
 
-                    // Recalculate price
+                    // price recalculation
                     if (existingItem.Type == "Blanket")
                     {
                         existingItem.Price = 50;
@@ -210,7 +198,7 @@ namespace AplicatieSpalatorie.Api.Controllers
                 }
                 else
                 {
-                    // New item: add it to the order
+                    // new item
                     var newItem = new Item
                     {
                         Type = incomingItem.Type,
@@ -218,7 +206,7 @@ namespace AplicatieSpalatorie.Api.Controllers
                         Width = incomingItem.Width
                     };
 
-                    // Calculate price for the new item
+                    // new item price calculation
                     if (newItem.Type == "Blanket")
                     {
                         newItem.Price = 50;
@@ -231,17 +219,14 @@ namespace AplicatieSpalatorie.Api.Controllers
                     existingOrder.Items.Add(newItem);
                 }
             }
-            // --------------------------------------------------------
+           
 
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
 
-        // --------------------------------------------------------------
-        // 5) DELETE: api/orders/5
-        //    Deletes the order from the DB
-        // --------------------------------------------------------------
+      // delete an order by id
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
@@ -259,11 +244,9 @@ namespace AplicatieSpalatorie.Api.Controllers
             return NoContent(); // 204
         }
 
-        // --------------------------------------------------------------
-        // 6) POST: api/orders/bulk-update
-        //    Takes a list of Orders (with IDs + new status?), updates each in DB
-        //    This replicates your "BulkUpdate" or "MassUpdateStatus" approach.
-        // --------------------------------------------------------------
+        
+        
+        // This method is for updating the status of multiple orders with one button and some checkboxes.
         [HttpPost("bulk-update")]
         public async Task<IActionResult> BulkUpdateStatus([FromBody] List<Order> orders)
         {
@@ -274,15 +257,15 @@ namespace AplicatieSpalatorie.Api.Controllers
 
             foreach (var updatedOrder in orders)
             {
-                // Find existing
+                // find the existing order in the database
                 var existing = await _context.Orders
                                              .FirstOrDefaultAsync(o => o.Id == updatedOrder.Id);
                 if (existing != null)
                 {
-                    // Update the status
+                    // update the status
                     existing.Status = updatedOrder.Status;
 
-                    // If status is "Ready," set CompletedDate
+                    // if status is ready,  set the completed date
                     if (updatedOrder.Status == "Ready")
                     {
                         existing.CompletedDate = DateTime.Now;
@@ -298,11 +281,7 @@ namespace AplicatieSpalatorie.Api.Controllers
             return Ok("Bulk update successful.");
         }
 
-        // --------------------------------------------------------------
-        // 7) POST: api/orders/{id}/update-status
-        //    If you want a single endpoint for updating just the status.
-        //    This replicates your "UpdateStatus" from the MVC code.
-        // --------------------------------------------------------------
+        //this method is for updating the status of a single order
         [HttpPost("{id}/update-status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] string newStatus)
         {

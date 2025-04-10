@@ -10,8 +10,8 @@ public class Item
 
     public double Price { get; set; }
 
-    public double? Length { get; set; }  // nullable for blankets
-    public double? Width { get; set; }
+    public double? Length { get; set; }  //can be null for blankets
+    public double? Width { get; set; }  // this too
 
     public int OrderId { get; set; }
 

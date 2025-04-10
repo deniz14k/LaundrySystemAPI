@@ -19,7 +19,7 @@ namespace AplicatieSpalatorie.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // One-to-many: Order -> Items
+            // one to many relationship between Order and Item
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Items)
                 .WithOne(i => i.Order)
