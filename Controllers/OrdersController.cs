@@ -241,7 +241,7 @@ namespace AplicatieSpalatorie.Api.Controllers
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
-            return NoContent(); // 204
+            return NoContent(); //204
         }
 
         
