@@ -3,8 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\accountdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\accountdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -13,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -34,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 232,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,29 +50,52 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AgIAAEYAAAAAqPvyVBPRvykAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-04T22:28:55.795Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "AccountDto.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\AccountDto.cs",
+              "RelativeDocumentMoniker": "Models\\AccountDto.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\AccountDto.cs",
+              "RelativeToolTip": "Models\\AccountDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-04T22:28:05.094Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-04T22:16:32.714Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-04T22:16:32.714Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAACIAAAAAAAAAAAAcwDMAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAFAAAAAAS12zdtkuwGYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-04T22:15:26.676Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-04T22:15:26.676Z"
             },
             {
               "$type": "Document",
@@ -74,14 +105,13 @@
               "RelativeDocumentMoniker": "Controllers\\OrdersController.cs",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\OrdersController.cs",
               "RelativeToolTip": "Controllers\\OrdersController.cs",
-              "ViewState": "AgIAAKAAAAAAAAAAAAAAALcAAAA8AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-03T10:59:56.754Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-03T10:59:56.754Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "Item.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\Item.cs",
               "RelativeDocumentMoniker": "Models\\Item.cs",
@@ -93,7 +123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Models\\Order.cs",
@@ -105,7 +135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
@@ -113,8 +143,7 @@
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-03T10:31:54.524Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-03T10:31:54.524Z"
             }
           ]
         },

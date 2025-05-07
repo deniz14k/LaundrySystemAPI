@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using AplicatieSpalatorie.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(opts =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")   // React dev server origin
+              .AllowAnyMethod()                       // GET, POST, PUT, DELETE, OPTIONS
+              .AllowAnyHeader()                       // Content-Type, Authorization, etc.
+              .AllowCredentials();                    // if you ever use cookies
+    });
+});
+
 
 // 2) JWT setup
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -38,27 +51,72 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
+
+// 3) Swagger/OpenAPI with JWT support
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AplicatieSpalatorie API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token in the text input below."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// 3) Seed roles at startup
+// 4) Apply pending migrations and seed roles at startup
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    foreach (var role in new[] { "Admin", "Manager", "Clerk" })
+
+    // Apply EF Core migrations automatically
+    db.Database.Migrate();
+
+    // Seed predefined roles if they do not exist
+    var allRoles = new[] { "Admin", "Manager", "Clerk", "Customer" };
+    foreach (var role in allRoles)
+    {
         if (!await roleMgr.RoleExistsAsync(role))
             await roleMgr.CreateAsync(new IdentityRole(role));
+    }
 }
 
+// 5) Configure the HTTP request pipeline
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AplicatieSpalatorie API V1");
+});
 
 app.UseHttpsRedirection();
+
+app.UseCors("DevCors");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
 app.Run();

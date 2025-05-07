@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using AplicatieSpalatorie.Data;
 using AplicatieSpalatorie.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AplicatieSpalatorie.Api.Controllers
 {
@@ -16,8 +17,9 @@ namespace AplicatieSpalatorie.Api.Controllers
             _context = context;
         }
 
-    
+
         // returns orders, can be filtered by search, date, or status.
+        [Authorize(Roles = "Admin,Clerk,Manager")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(
             [FromQuery] string? searchTerm,
@@ -53,6 +55,7 @@ namespace AplicatieSpalatorie.Api.Controllers
         }
 
         // this get method returns an order by a given id
+        [Authorize(Roles = "Admin,Clerk,Manager")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
@@ -69,6 +72,7 @@ namespace AplicatieSpalatorie.Api.Controllers
         }
 
         // method for creating a new order.
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
         {
@@ -107,8 +111,9 @@ namespace AplicatieSpalatorie.Api.Controllers
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
         }
 
-     
+
         // This method updates an existing order. We can add or remove items, change statuses etc
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
         {
@@ -226,7 +231,8 @@ namespace AplicatieSpalatorie.Api.Controllers
         }
 
 
-      // delete an order by id
+        // delete an order by id
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
@@ -244,9 +250,10 @@ namespace AplicatieSpalatorie.Api.Controllers
             return NoContent(); //204
         }
 
-        
-        
+
+
         // This method is for updating the status of multiple orders with one button and some checkboxes.
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("bulk-update")]
         public async Task<IActionResult> BulkUpdateStatus([FromBody] List<Order> orders)
         {
