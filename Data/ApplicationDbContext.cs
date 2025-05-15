@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using AplicatieSpalatorie.Models;
+using ApiSpalatorie.Models;
 
 
 namespace AplicatieSpalatorie.Data
@@ -15,6 +16,8 @@ namespace AplicatieSpalatorie.Data
 
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
+
+        public DbSet<OtpEntry> OtpEntries => Set<OtpEntry>();
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

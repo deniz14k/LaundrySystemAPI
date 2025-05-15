@@ -22,6 +22,30 @@ namespace ApiSpalatorie.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ApiSpalatorie.Models.OtpEntry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtpEntries");
+                });
+
             modelBuilder.Entity("AplicatieSpalatorie.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -39,6 +63,12 @@ namespace ApiSpalatorie.Migrations
 
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("DeliveryLatitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("DeliveryLongitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)");

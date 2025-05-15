@@ -31,6 +31,8 @@ namespace AplicatieSpalatorie.Models
         public double TotalPrice => Items.Sum(i => i.Price);
         public DateTime? CompletedDate { get; set; }
 
+        public double? DeliveryLatitude { get; set; }
+        public double? DeliveryLongitude { get; set; }
 
 
     }

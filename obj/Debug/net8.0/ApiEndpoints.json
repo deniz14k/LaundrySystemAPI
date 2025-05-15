@@ -197,5 +197,93 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AplicatieSpalatorie.Api.Controllers.OrdersController",
+    "Method": "GetMyOrders",
+    "RelativePath": "api/Orders/my",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[AplicatieSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AplicatieSpalatorie.Api.Controllers.OrdersController",
+    "Method": "GetServiceTypes",
+    "RelativePath": "api/Orders/service-types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AplicatieSpalatorie.Api.Controllers.OrdersController",
+    "Method": "GetStatuses",
+    "RelativePath": "api/Orders/statuses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OtpController",
+    "Method": "SendOtp",
+    "RelativePath": "api/Otp/send",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ApiSpalatorie.DTOs.PhoneDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OtpController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/Otp/verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ApiSpalatorie.DTOs.OtpVerifyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiSpalatorie.Controllers.PlannerController",
+    "Method": "GetRoute",
+    "RelativePath": "api/Planner/route",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

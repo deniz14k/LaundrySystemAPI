@@ -3,6 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using AplicatieSpalatorie.Data;
 using AplicatieSpalatorie.Models;
 using Microsoft.AspNetCore.Authorization;
+using Vonage.Messaging;
+using Vonage.Request;
+using Vonage;
+using ApiSpalatorie.Models;
+using Microsoft.Extensions.Options;
+
 
 namespace AplicatieSpalatorie.Api.Controllers
 {
@@ -11,14 +17,52 @@ namespace AplicatieSpalatorie.Api.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly VonageSettings _vonage;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(ApplicationDbContext context, IOptions<VonageSettings> vonageOptions)
         {
             _context = context;
+            _vonage = vonageOptions.Value;
         }
 
 
-        // returns orders, can be filtered by search, date, or status.
+
+        // GET: api/orders/service-types
+        [HttpGet("service-types")]
+        [AllowAnonymous]
+        public IActionResult GetServiceTypes()
+            => Ok(new[] { "Office", "PickupDelivery" });
+
+        // GET: api/orders/statuses
+        [HttpGet("statuses")]
+        [AllowAnonymous]
+        public IActionResult GetStatuses()
+            => Ok(new[] { "Pending", "In Progress", "Ready" });
+
+
+        [Authorize(Roles = "Customer")]
+        [HttpGet("my")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetMyOrders()
+        {
+            //The user’s phone number was stored as Name in the JWT claims
+            var phone = User.Identity?.Name;
+            if (string.IsNullOrEmpty(phone))
+                return Unauthorized();
+
+            // Query your Orders table via the _context
+            var orders = await _context.Orders
+                .Where(o => o.TelephoneNumber == phone)
+                .Include(o => o.Items)
+                .ToListAsync();
+
+            return Ok(orders);
+        }
+
+
+
+
+
+        //returns orders, can be filtered by search, date, or status.
         [Authorize(Roles = "Admin,Clerk,Manager")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrders(
@@ -49,7 +93,7 @@ namespace AplicatieSpalatorie.Api.Controllers
                 query = query.Where(o => o.Status == status);
             }
 
-            // we execute the query and then return a json
+            // we execute the query and then we return a json
             var orders = await query.ToListAsync();
             return Ok(orders);
         }
@@ -72,24 +116,29 @@ namespace AplicatieSpalatorie.Api.Controllers
         }
 
         // method for creating a new order.
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Customer")]
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
         {
-            // validation
+            if (User.IsInRole("Customer"))
+            {
+                var phone = User.Identity!.Name!;
+                order.TelephoneNumber = phone;
+                order.CustomerId = phone;
+            }
+
             if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (order.ServiceType == "PickupDelivery"
+             && string.IsNullOrWhiteSpace(order.DeliveryAddress))
             {
+                ModelState.AddModelError(
+                  nameof(order.DeliveryAddress),
+                  "Delivery address is required for pickup/delivery orders.");
                 return BadRequest(ModelState);
             }
 
-            // address needed if pickup delivery order
-            if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
-            {
-                ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
-                return BadRequest(ModelState);
-            }
-
-            // prices for items
             foreach (var item in order.Items)
             {
                 if (item.Type == "Blanket")
@@ -98,17 +147,24 @@ namespace AplicatieSpalatorie.Api.Controllers
                     item.Length = null;
                     item.Width = null;
                 }
-                else if (item.Type == "Carpet" && item.Length.HasValue && item.Width.HasValue)
+                else if (item.Type == "Carpet"
+                      && item.Length.HasValue
+                      && item.Width.HasValue)
                 {
-                    var baseRate = (order.ServiceType == "PickupDelivery") ? 17 : 15;
-                    item.Price = item.Length.Value * item.Width.Value * baseRate;
+                    var rate = order.ServiceType == "PickupDelivery" ? 17 : 15;
+                    item.Price = item.Length.Value * item.Width.Value * rate;
                 }
             }
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            // confirmation SMS
+            var msg = $"Your order #{order.Id} was created! We'll be in touch soon.";
+            await SendSmsAsync(order.TelephoneNumber, msg);
+
+            return CreatedAtAction(nameof(GetOrder),
+                new { id = order.Id }, order);
         }
 
 
@@ -231,6 +287,33 @@ namespace AplicatieSpalatorie.Api.Controllers
         }
 
 
+        private async Task SendSmsAsync(string toPhone, string text)
+        {
+            // Ensure E.164 format for Romania if no '+' present
+            var normalized = toPhone.StartsWith("+")
+               ? toPhone
+               : $"+40{toPhone}";
+
+            var creds = Credentials.FromApiKeyAndSecret(_vonage.ApiKey, _vonage.ApiSecret);
+            var client = new VonageClient(creds);
+
+            var response = await client.SmsClient.SendAnSmsAsync(new SendSmsRequest
+            {
+                To = normalized,
+                From = _vonage.From,
+                Text = text
+            });
+
+            var msg = response.Messages.FirstOrDefault();
+            if (msg == null || msg.Status != "0")
+                throw new InvalidOperationException($"SMS failed to {normalized}: {msg?.ErrorText}");
+
+            
+        }
+
+
+
+
         // delete an order by id
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
@@ -258,29 +341,28 @@ namespace AplicatieSpalatorie.Api.Controllers
         public async Task<IActionResult> BulkUpdateStatus([FromBody] List<Order> orders)
         {
             if (orders == null || orders.Count == 0)
-            {
                 return BadRequest("No orders provided.");
-            }
 
             foreach (var updatedOrder in orders)
             {
-                // find the existing order in the database
                 var existing = await _context.Orders
                                              .FirstOrDefaultAsync(o => o.Id == updatedOrder.Id);
                 if (existing != null)
                 {
-                    // update the status
                     existing.Status = updatedOrder.Status;
+                    existing.CompletedDate = updatedOrder.Status == "Ready"
+                        ? DateTime.Now
+                        : (DateTime?)null;
 
-                    // if status is ready,  set the completed date
-                    if (updatedOrder.Status == "Ready")
+                    // Send SMS for key status changes
+                    var message = updatedOrder.Status switch
                     {
-                        existing.CompletedDate = DateTime.Now;
-                    }
-                    else
-                    {
-                        existing.CompletedDate = null;
-                    }
+                        "In Progress" => $"Order #{existing.Id} is now in progress.",
+                        "Ready" => $"Good news! Order #{existing.Id} is ready for pickup.",
+                        _ => null
+                    };
+                    if (message != null)
+                        await SendSmsAsync(existing.TelephoneNumber, message);
                 }
             }
 
@@ -288,26 +370,31 @@ namespace AplicatieSpalatorie.Api.Controllers
             return Ok("Bulk update successful.");
         }
 
-        //this method is for updating the status of a single order
+        // Single‐order status update (Admin, Manager only)
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost("{id}/update-status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] string newStatus)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
-            if (order == null)
+            var existing = await _context.Orders
+                                         .FirstOrDefaultAsync(o => o.Id == id);
+            if (existing == null)
                 return NotFound();
 
-            order.Status = newStatus;
-
-            if (newStatus == "Ready")
-            {
-                order.CompletedDate = DateTime.Now;
-            }
-            else
-            {
-                order.CompletedDate = null;
-            }
+            existing.Status = newStatus;
+            existing.CompletedDate = newStatus == "Ready" ? DateTime.Now : (DateTime?)null;
 
             await _context.SaveChangesAsync();
+
+            // SMS notification
+            var message = newStatus switch
+            {
+                "In Progress" => $"Order #{existing.Id} is now in progress.",
+                "Ready" => $"Good news! Order #{existing.Id} is ready for pickup.",
+                _ => null
+            };
+            if (message != null)
+                await SendSmsAsync(existing.TelephoneNumber, message);
+
             return Ok($"Status updated to {newStatus} for Order ID {id}.");
         }
     }

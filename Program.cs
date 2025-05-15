@@ -5,10 +5,14 @@ using AplicatieSpalatorie.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Microsoft.Extensions.Options;
+using Vonage;
+using ApiSpalatorie.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("https://localhost:7223", "http://localhost:5292");
 
-// 1) EF + Identity stores
+// EF + Identity
 builder.Services.AddDbContext<ApplicationDbContext>(opts =>
     opts.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -20,15 +24,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")   // React dev server origin
+        policy.WithOrigins("http://localhost:3000")   // React interface server
               .AllowAnyMethod()                       // GET, POST, PUT, DELETE, OPTIONS
-              .AllowAnyHeader()                       // Content-Type, Authorization, etc.
-              .AllowCredentials();                    // if you ever use cookies
+              .AllowAnyHeader()                       // Content Type, Authorization.
+              .AllowCredentials();                    //  for  cookies :D 
     });
 });
 
 
-// 2) JWT setup
+builder.Services.Configure<VonageSettings>(
+builder.Configuration.GetSection("Vonage"));
+
+
+// jwt setup
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 builder.Services.AddAuthentication(options =>
@@ -52,7 +60,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-// 3) Swagger/OpenAPI with JWT support
+//Swagger with jwt support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -85,13 +93,13 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// 4) Apply pending migrations and seed roles at startup
+// Apply pending migrations and seed roles at startup
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var roleMgr = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-    // Apply EF Core migrations automatically
+    //Apply EF Core migrations automatically
     db.Database.Migrate();
 
     // Seed predefined roles if they do not exist
@@ -103,7 +111,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 5) Configure the HTTP request pipeline
+//Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
