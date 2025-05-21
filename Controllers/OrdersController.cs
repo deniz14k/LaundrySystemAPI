@@ -8,6 +8,7 @@ using Vonage.Request;
 using Vonage;
 using ApiSpalatorie.Models;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 
 namespace AplicatieSpalatorie.Api.Controllers
@@ -39,6 +40,30 @@ namespace AplicatieSpalatorie.Api.Controllers
         public IActionResult GetStatuses()
             => Ok(new[] { "Pending", "In Progress", "Ready" });
 
+
+
+        // Allow only customers
+        [Authorize(Roles = "Customer")]
+        [HttpGet("my/{id}")]
+        public async Task<ActionResult<Order>> GetMyOrder(int id)
+        {
+            // Phone stored as Name claim
+            var phone = User.Identity?.Name;
+            if (string.IsNullOrEmpty(phone))
+                return Unauthorized();
+
+            // Only return if the order’s phone matches
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id
+                                       && o.TelephoneNumber == phone);
+
+            if (order == null)
+                return NotFound();
+
+            return Ok(order);
+        }
+        
 
         [Authorize(Roles = "Customer")]
         [HttpGet("my")]
@@ -120,16 +145,23 @@ namespace AplicatieSpalatorie.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
         {
+            // If a Customer is creating the order, pull phone & name out of their JWT
             if (User.IsInRole("Customer"))
             {
-                var phone = User.Identity!.Name!;
+                // NameIdentifier was set to the phone number in OtpController.Verify :contentReference[oaicite:0]{index=0}
+                var phone = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                // Name was set to the customer’s real name in OtpController.Verify :contentReference[oaicite:1]{index=1}
+                var name = User.FindFirstValue(ClaimTypes.Name)!;
+
                 order.TelephoneNumber = phone;
-                order.CustomerId = phone;
+                order.CustomerId = name;    // now stores their real name
             }
 
+            // Validate model
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Ensure delivery address when needed
             if (order.ServiceType == "PickupDelivery"
              && string.IsNullOrWhiteSpace(order.DeliveryAddress))
             {
@@ -139,6 +171,7 @@ namespace AplicatieSpalatorie.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Price‐calculate each item
             foreach (var item in order.Items)
             {
                 if (item.Type == "Blanket")
@@ -156,135 +189,135 @@ namespace AplicatieSpalatorie.Api.Controllers
                 }
             }
 
+            // Save to DB
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
-            // confirmation SMS
+            // Send confirmation SMS
             var msg = $"Your order #{order.Id} was created! We'll be in touch soon.";
             await SendSmsAsync(order.TelephoneNumber, msg);
 
-            return CreatedAtAction(nameof(GetOrder),
-                new { id = order.Id }, order);
+            // Return 201 with the new order
+            return CreatedAtAction(
+              nameof(GetOrder),
+              new { id = order.Id },
+              order
+            );
         }
 
 
         // This method updates an existing order. We can add or remove items, change statuses etc
         [Authorize(Roles = "Admin,Manager")]
         [HttpPut("{id}")]
+      
         public async Task<IActionResult> UpdateOrder(int id, [FromBody] Order order)
         {
             if (id != order.Id)
-            {
                 return BadRequest("ID in URL doesn't match Order.Id.");
-            }
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            // if we need address(only for pickup delivery orders)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            // Pickup-delivery requires address
             if (order.ServiceType == "PickupDelivery" && string.IsNullOrWhiteSpace(order.DeliveryAddress))
             {
                 ModelState.AddModelError("DeliveryAddress", "Delivery address is required for pickup/delivery orders.");
                 return BadRequest(ModelState);
             }
 
-            // find the existing order in database
-            var existingOrder = await _context.Orders
+            // Load existing order
+            var existing = await _context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id);
 
-            if (existingOrder == null)
-            {
+            if (existing == null)
                 return NotFound();
-            }
 
-            // update properties
-            existingOrder.CustomerId = order.CustomerId;
-            existingOrder.TelephoneNumber = order.TelephoneNumber;
-            existingOrder.ReceivedDate = order.ReceivedDate;
-            existingOrder.Status = order.Status;
-            existingOrder.ServiceType = order.ServiceType;
-            existingOrder.DeliveryAddress = order.DeliveryAddress;
-            existingOrder.Observation = order.Observation;
+            /* -----------------------------------------------------------
+             * Remember the old status so we can detect a change later
+             * ----------------------------------------------------------*/
+            var previousStatus = existing.Status;
 
+            /* ----------  Update scalar fields  ---------- */
+            existing.CustomerId = order.CustomerId;
+            existing.TelephoneNumber = order.TelephoneNumber;
+            existing.ReceivedDate = order.ReceivedDate;
+            existing.Status = order.Status;
+            existing.ServiceType = order.ServiceType;
+            existing.DeliveryAddress = order.DeliveryAddress;
+            existing.Observation = order.Observation;
 
-            if (order.Status == "Ready" && existingOrder.CompletedDate == null)
-            {
-                existingOrder.CompletedDate = DateTime.Now;
-            }
-            else if (order.Status != "Ready")
-            {
-                existingOrder.CompletedDate = null;
-            }
+            /* ----------  CompletedDate logic  ---------- */
+            if (existing.Status == "Ready" && existing.CompletedDate == null)
+                existing.CompletedDate = DateTime.Now;
+            else if (existing.Status != "Ready")
+                existing.CompletedDate = null;
 
-            // we update the items
-            
-            var incomingItemIds = order.Items.Select(i => i.Id).Where(id => id != 0).ToList();
+            /* ----------  Sync items collection  ---------- */
+            var incomingIds = order.Items.Where(i => i.Id != 0).Select(i => i.Id).ToList();
 
-
-            // we remove items that are not in the incoming list and have an ID != 0
-            // (meaning they are already in the database)
-            var itemsToRemove = existingOrder.Items
-                .Where(i => i.Id != 0 && !incomingItemIds.Contains(i.Id))
-                .ToList();
-            foreach (var item in itemsToRemove)
-            {
+            // remove deleted items
+            var toRemove = existing.Items
+                                   .Where(i => i.Id != 0 && !incomingIds.Contains(i.Id))
+                                   .ToList();
+            foreach (var item in toRemove)
                 _context.Items.Remove(item);
-            }
 
-            // process each item
-            foreach (var incomingItem in order.Items)
+            foreach (var inc in order.Items)
             {
-                // if the item has an ID, we update it
-                var existingItem = existingOrder.Items.FirstOrDefault(i => i.Id == incomingItem.Id);
-                if (existingItem != null)
+                var cur = existing.Items.FirstOrDefault(i => i.Id == inc.Id);
+                if (cur != null)
                 {
-                    existingItem.Type = incomingItem.Type;
-                    existingItem.Length = incomingItem.Length;
-                    existingItem.Width = incomingItem.Width;
-
-                    // price recalculation
-                    if (existingItem.Type == "Blanket")
-                    {
-                        existingItem.Price = 50;
-                        existingItem.Length = null;
-                        existingItem.Width = null;
-                    }
-                    else if (existingItem.Type == "Carpet" && existingItem.Length.HasValue && existingItem.Width.HasValue)
-                    {
-                        var baseRate = (existingOrder.ServiceType == "PickupDelivery") ? 17 : 15;
-                        existingItem.Price = existingItem.Length.Value * existingItem.Width.Value * baseRate;
-                    }
+                    // update existing item
+                    cur.Type = inc.Type;
+                    cur.Length = inc.Length;
+                    cur.Width = inc.Width;
                 }
                 else
                 {
-                    // new item
-                    var newItem = new Item
+                    // add new item
+                    cur = new Item
                     {
-                        Type = incomingItem.Type,
-                        Length = incomingItem.Length,
-                        Width = incomingItem.Width
+                        Type = inc.Type,
+                        Length = inc.Length,
+                        Width = inc.Width
                     };
+                    existing.Items.Add(cur);
+                }
 
-                    // new item price calculation
-                    if (newItem.Type == "Blanket")
-                    {
-                        newItem.Price = 50;
-                    }
-                    else if (newItem.Type == "Carpet" && newItem.Length.HasValue && newItem.Width.HasValue)
-                    {
-                        var baseRate = (existingOrder.ServiceType == "PickupDelivery") ? 17 : 15;
-                        newItem.Price = newItem.Length.Value * newItem.Width.Value * baseRate;
-                    }
-                    existingOrder.Items.Add(newItem);
+                /* price calculation */
+                if (cur.Type == "Blanket")
+                {
+                    cur.Price = 50;
+                    cur.Length = cur.Width = null;
+                }
+                else if (cur.Type == "Carpet" && cur.Length.HasValue && cur.Width.HasValue)
+                {
+                    var rate = existing.ServiceType == "PickupDelivery" ? 17 : 15;
+                    cur.Price = cur.Length.Value * cur.Width.Value * rate;
                 }
             }
-           
 
+            /* ----------  Save first, then SMS  ---------- */
             await _context.SaveChangesAsync();
+
+            /* ----------  SMS on status change  ---------- */
+            if (previousStatus != existing.Status)
+            {
+                string? sms = existing.Status switch
+                {
+                    "In Progress" => $"Order #{existing.Id} is now in progress.",
+                    "Ready" => $"Good news! Order #{existing.Id} is ready for pickup.",
+                    _ => null
+                };
+
+                if (sms != null)
+                    await SendSmsAsync(existing.TelephoneNumber, sms);
+            }
+
             return NoContent();
         }
+
 
 
         private async Task SendSmsAsync(string toPhone, string text)

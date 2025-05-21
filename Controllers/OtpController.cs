@@ -109,26 +109,35 @@ public class OtpController : ControllerBase
         await _db.SaveChangesAsync();
 
         // Issue JWT
+        // Issue JWT, now including the Name claim (not just the phone)
         var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, dto.Phone),
-            new Claim(ClaimTypes.NameIdentifier, dto.Phone),
-            new Claim(ClaimTypes.Role, "Customer")
-        };
+{
+    // Set NameIdentifier to phone so you can still look it up:
+    new Claim(ClaimTypes.NameIdentifier, dto.Phone),
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+    // Use dto.Name if provided, otherwise fallback to phone:
+    new Claim(ClaimTypes.Name,
+        !string.IsNullOrWhiteSpace(dto.Name)
+           ? dto.Name
+           : dto.Phone),
+
+    new Claim(ClaimTypes.Role, "Customer")
+};
 
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Issuer"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(2),
-            signingCredentials: creds
+            signingCredentials: new SigningCredentials(
+                                   new SymmetricSecurityKey(
+                                       Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)),
+                                   SecurityAlgorithms.HmacSha256)
         );
 
         return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
     }
+
 
     private async Task SendSmsAsync(string toPhone, string text)
     {

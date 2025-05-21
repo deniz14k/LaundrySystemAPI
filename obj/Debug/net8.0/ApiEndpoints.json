@@ -220,6 +220,32 @@
   },
   {
     "ContainingType": "AplicatieSpalatorie.Api.Controllers.OrdersController",
+    "Method": "GetMyOrder",
+    "RelativePath": "api/Orders/my/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AplicatieSpalatorie.Models.Order",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AplicatieSpalatorie.Api.Controllers.OrdersController",
     "Method": "GetServiceTypes",
     "RelativePath": "api/Orders/service-types",
     "HttpMethod": "GET",
