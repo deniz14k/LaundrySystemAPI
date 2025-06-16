@@ -62,7 +62,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[AplicatieSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ApiSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -82,13 +82,13 @@
     "Parameters": [
       {
         "Name": "order",
-        "Type": "AplicatieSpalatorie.Models.Order",
+        "Type": "ApiSpalatorie.Models.Order",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "AplicatieSpalatorie.Models.Order",
+        "Type": "ApiSpalatorie.Models.Order",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -114,7 +114,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "AplicatieSpalatorie.Models.Order",
+        "Type": "ApiSpalatorie.Models.Order",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -139,7 +139,7 @@
       },
       {
         "Name": "order",
-        "Type": "AplicatieSpalatorie.Models.Order",
+        "Type": "ApiSpalatorie.Models.Order",
         "IsRequired": true
       }
     ],
@@ -192,7 +192,7 @@
     "Parameters": [
       {
         "Name": "orders",
-        "Type": "System.Collections.Generic.List\u00601[[AplicatieSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[ApiSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],
@@ -208,7 +208,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[AplicatieSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ApiSpalatorie.Models.Order, ApiSpalatorie, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -234,7 +234,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "AplicatieSpalatorie.Models.Order",
+        "Type": "ApiSpalatorie.Models.Order",
         "MediaTypes": [
           "text/plain",
           "application/json",

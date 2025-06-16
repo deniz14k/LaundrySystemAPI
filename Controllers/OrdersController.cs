@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AplicatieSpalatorie.Data;
-using AplicatieSpalatorie.Models;
 using Microsoft.AspNetCore.Authorization;
 using Vonage.Messaging;
 using Vonage.Request;
@@ -9,6 +7,7 @@ using Vonage;
 using ApiSpalatorie.Models;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using ApiSpalatorie.Data;
 
 
 namespace AplicatieSpalatorie.Api.Controllers
@@ -19,11 +18,13 @@ namespace AplicatieSpalatorie.Api.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly VonageSettings _vonage;
+        private readonly GoogleMapsSettings _maps;
 
-        public OrdersController(ApplicationDbContext context, IOptions<VonageSettings> vonageOptions)
+        public OrdersController(ApplicationDbContext context, IOptions<VonageSettings> vonageOptions, IOptions<GoogleMapsSettings> maps)
         {
             _context = context;
             _vonage = vonageOptions.Value;
+            _maps = maps.Value;
         }
 
 
@@ -42,13 +43,32 @@ namespace AplicatieSpalatorie.Api.Controllers
 
 
 
+
+        private async Task<(double lat, double lng)> GeocodeAddressAsync(string address)
+        {
+            var url = $"https://maps.googleapis.com/maps/api/geocode/json?address={Uri.EscapeDataString(address)}&key={_maps.ApiKey}";
+
+            using var client = new HttpClient();
+            var res = await client.GetFromJsonAsync<GeocodeResponse>(url);
+
+            var location = res?.results?.FirstOrDefault()?.geometry?.location;
+
+            if (location == null)
+                throw new InvalidOperationException("No location found from geocoding response.");
+
+            return (location?.lat ?? 0, location?.lng ?? 0);
+        }
+
+
+
+
         // Allow only customers
         [Authorize(Roles = "Customer")]
         [HttpGet("my/{id}")]
         public async Task<ActionResult<Order>> GetMyOrder(int id)
         {
-            // Phone stored as Name claim
-            var phone = User.Identity?.Name;
+            // Phone stored as NameIdentifier claim
+            var phone = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(phone))
                 return Unauthorized();
 
@@ -69,8 +89,8 @@ namespace AplicatieSpalatorie.Api.Controllers
         [HttpGet("my")]
         public async Task<ActionResult<IEnumerable<Order>>> GetMyOrders()
         {
-            //The user’s phone number was stored as Name in the JWT claims
-            var phone = User.Identity?.Name;
+            //The user’s phone number is now in the NameIdentifier claim
+            var phone = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(phone))
                 return Unauthorized();
 
@@ -170,6 +190,15 @@ namespace AplicatieSpalatorie.Api.Controllers
                   "Delivery address is required for pickup/delivery orders.");
                 return BadRequest(ModelState);
             }
+
+
+            if (order.ServiceType == "PickupDelivery" && !string.IsNullOrWhiteSpace(order.DeliveryAddress))
+            {
+                var (lat, lng) = await GeocodeAddressAsync(order.DeliveryAddress);
+                order.DeliveryLatitude = lat;
+                order.DeliveryLongitude = lng;
+            }
+
 
             // Price‐calculate each item
             foreach (var item in order.Items)

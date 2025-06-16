@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 
-namespace AplicatieSpalatorie.Models
+namespace ApiSpalatorie.Models
 {
     public class Order
     {

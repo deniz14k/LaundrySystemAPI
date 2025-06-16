@@ -1,4 +1,4 @@
-﻿using AplicatieSpalatorie.Models;
+﻿using ApiSpalatorie.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;

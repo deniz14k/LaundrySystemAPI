@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using AplicatieSpalatorie.Models;
 using ApiSpalatorie.Models;
 
 
-namespace AplicatieSpalatorie.Data
+namespace ApiSpalatorie.Data
 {
     public class ApplicationDbContext : IdentityDbContext<IdentityUser, IdentityRole, string>
     {

@@ -1,4 +1,4 @@
-namespace AplicatieSpalatorie.Models
+namespace ApiSpalatorie.Models
 {
     public class ErrorViewModel
     {

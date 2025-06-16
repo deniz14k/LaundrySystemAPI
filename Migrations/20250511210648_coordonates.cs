@@ -5,7 +5,7 @@
 namespace ApiSpalatorie.Migrations
 {
     /// <inheritdoc />
-    public partial class coordonates : Migration
+    public partial class Coordonates : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

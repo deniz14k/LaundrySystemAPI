@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using AplicatieSpalatorie.Data;
-using AplicatieSpalatorie.Models;
 using ApiSpalatorie.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ApiSpalatorie.Models;
+using ApiSpalatorie.Data;
 
 [ApiController]
 [Route("api/[controller]")]

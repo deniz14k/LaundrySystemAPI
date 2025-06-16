@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using AplicatieSpalatorie.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Vonage;
 using ApiSpalatorie.Models;
+using ApiSpalatorie.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("https://localhost:7223", "http://localhost:5292");
@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")   // React interface server
+        policy.WithOrigins("http://localhost:3001")   // React interface server
               .AllowAnyMethod()                       // GET, POST, PUT, DELETE, OPTIONS
               .AllowAnyHeader()                       // Content Type, Authorization.
               .AllowCredentials();                    //  for  cookies :D 
@@ -34,6 +34,10 @@ builder.Services.AddCors(options =>
 
 builder.Services.Configure<VonageSettings>(
 builder.Configuration.GetSection("Vonage"));
+
+builder.Services.Configure<GoogleMapsSettings>(
+    builder.Configuration.GetSection("GoogleMaps"));
+
 
 
 // jwt setup

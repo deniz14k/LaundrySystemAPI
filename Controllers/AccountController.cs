@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AplicatieSpalatorie.Data;
+using ApiSpalatorie.Data;
 using static ApiSpalatorie.Models.AccountDto;
 
 [ApiController]
