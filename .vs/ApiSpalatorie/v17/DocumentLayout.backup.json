@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\plannercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\plannercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -27,25 +23,12 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "RouteResponseDtos.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\RouteResponseDtos.cs",
-              "RelativeDocumentMoniker": "Models\\RouteResponseDtos.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\RouteResponseDtos.cs",
-              "RelativeToolTip": "Models\\RouteResponseDtos.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAYwEoAAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-16T18:39:24.67Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "PlannerController.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\PlannerController.cs",
               "RelativeDocumentMoniker": "Controllers\\PlannerController.cs",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\PlannerController.cs",
               "RelativeToolTip": "Controllers\\PlannerController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE0AAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAF0AAAAAAAAAAAAswH8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-16T18:27:25.562Z",
               "EditorCaption": ""

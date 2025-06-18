@@ -59,14 +59,12 @@ namespace ApiSpalatorie.Controllers
             client.DefaultRequestHeaders.Add("X-Goog-FieldMask", "*");
 
             var response = await client.PostAsJsonAsync(baseUrl, body);
-
             var rawContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine("❌ Google API ERROR:");
                 Console.WriteLine(rawContent);
-
                 throw new InvalidOperationException($"Google Maps API error: {rawContent}");
             }
 
@@ -90,21 +88,40 @@ namespace ApiSpalatorie.Controllers
             if (orders.Count < 2)
                 return BadRequest("Need at least 2 addresses to create a route.");
 
-            // 1. Extract coordinates
+            // Step 1: Extract coordinates
             var coords = orders.Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)).ToList();
 
-            // 2. Solve TSP
+            // Step 2: Solve TSP
             var orderedIndexes = TspRouteOptimizer.SolveTsp(coords);
             var orderedOrders = orderedIndexes.Select(i => orders[i]).ToList();
 
-            // 3. Rebuild ordered coord list
+            // Step 3: Rebuild ordered coord list
             var orderedCoords = orderedOrders
                 .Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value))
                 .ToList();
 
-            // 4. Call Google route API
+            // Step 4: Call Google route API
             var routeData = await GetOptimizedRoute(orderedCoords);
-            return Ok(routeData);
+            var route = routeData.routes?.FirstOrDefault();
+
+            if (route == null)
+                return BadRequest("No route found from Google Maps API.");
+
+            // Step 5: Return full route + order info
+            return Ok(new
+            {
+                route,
+                orders = orderedOrders.Select((o, i) => new
+                {
+                    index = i + 1,
+                    lat = o.DeliveryLatitude,
+                    lng = o.DeliveryLongitude,
+                    address = o.DeliveryAddress,
+                    phone = o.TelephoneNumber,
+                    id = o.Id,
+                    customer = o.CustomerId
+                })
+            });
         }
     }
 }
