@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using ApiSpalatorie.Helpers;
 using ApiSpalatorie.Data;
 using System.Net.Http.Json;
+using ApiSpalatorie.Models.DTOs;
 
 namespace ApiSpalatorie.Controllers
 {
@@ -76,6 +77,63 @@ namespace ApiSpalatorie.Controllers
             return result!;
         }
 
+
+        [HttpPost("create-route")]
+        public async Task<IActionResult> CreateRoute([FromBody] CreateRouteRequest request)
+        {
+            if (request.OrderIds == null || request.OrderIds.Count < 2)
+                return BadRequest("At least two orders are required.");
+
+            // Verifică dacă vreuna din comenzi este deja într-o rută
+            var existingOrderIds = await _db.DeliveryRouteOrders
+                .Where(o => request.OrderIds.Contains(o.OrderId))
+                .Select(o => o.OrderId)
+                .ToListAsync();
+
+            if (existingOrderIds.Any())
+                return BadRequest($"Orders already assigned to routes: {string.Join(", ", existingOrderIds)}");
+
+            var orders = await _db.Orders
+                .Where(o => request.OrderIds.Contains(o.Id))
+                .ToListAsync();
+
+            if (orders.Count != request.OrderIds.Count)
+                return NotFound("Some orders were not found.");
+
+            // Creează ruta
+            var route = new DeliveryRoute
+            {
+                CreatedAt = DateTime.Now,
+                CreatedBy = User.Identity?.Name,
+                DriverName = request.DriverName
+            };
+
+            _db.DeliveryRoutes.Add(route);
+            await _db.SaveChangesAsync(); // avem nevoie de route.Id
+
+            foreach (var order in orders)
+            {
+                _db.DeliveryRouteOrders.Add(new DeliveryRouteOrder
+                {
+                    DeliveryRouteId = route.Id,
+                    OrderId = order.Id,
+                    StopIndex = 0, // inițial
+                    IsCompleted = false
+                });
+            }
+
+            await _db.SaveChangesAsync();
+
+            return Ok(new
+            {
+                route.Id,
+                route.DriverName,
+                Orders = orders.Select(o => o.Id)
+            });
+        }
+
+
+
         // GET api/planner/route?date=2025-05-12
         [HttpGet("route")]
         public async Task<IActionResult> GetRoute(DateTime date)
@@ -107,10 +165,13 @@ namespace ApiSpalatorie.Controllers
             if (route == null)
                 return BadRequest("No route found from Google Maps API.");
 
+            var totalPrice = orderedOrders.Sum(o => o.Items.Sum(i => i.Price));
+
             // Step 5: Return full route + order info
             return Ok(new
             {
                 route,
+                totalPrice,
                 orders = orderedOrders.Select((o, i) => new
                 {
                     index = i + 1,
@@ -119,7 +180,8 @@ namespace ApiSpalatorie.Controllers
                     address = o.DeliveryAddress,
                     phone = o.TelephoneNumber,
                     id = o.Id,
-                    customer = o.CustomerId
+                    customer = o.CustomerId,
+                    price = o.Items.Sum(item => item.Price)
                 })
             });
         }

@@ -67,6 +67,85 @@
         }
       }
     },
+    "/api/DeliveryRoute": {
+      "get": {
+        "tags": [
+          "DeliveryRoute"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DeliveryRoute/eligible-orders": {
+      "get": {
+        "tags": [
+          "DeliveryRoute"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DeliveryRoute/{routeId}/complete/{orderId}": {
+      "patch": {
+        "tags": [
+          "DeliveryRoute"
+        ],
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/DeliveryRoute/{id}": {
+      "get": {
+        "tags": [
+          "DeliveryRoute"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Orders/service-types": {
       "get": {
         "tags": [
@@ -530,6 +609,37 @@
         }
       }
     },
+    "/api/Planner/create-route": {
+      "post": {
+        "tags": [
+          "Planner"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRouteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRouteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRouteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Planner/route": {
       "get": {
         "tags": [
@@ -555,6 +665,24 @@
   },
   "components": {
     "schemas": {
+      "CreateRouteRequest": {
+        "type": "object",
+        "properties": {
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          },
+          "orderIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Item": {
         "type": "object",
         "properties": {
@@ -665,6 +793,9 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "isAssignedToRoute": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

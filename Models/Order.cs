@@ -34,6 +34,9 @@ namespace ApiSpalatorie.Models
         public double? DeliveryLatitude { get; set; }
         public double? DeliveryLongitude { get; set; }
 
+        public bool IsAssignedToRoute { get; set; } = false;
+
+
 
     }
 

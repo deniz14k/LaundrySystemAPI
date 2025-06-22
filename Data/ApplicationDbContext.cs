@@ -16,6 +16,10 @@ namespace ApiSpalatorie.Data
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<Item> Items { get; set; } = null!;
 
+        public DbSet<DeliveryRoute> DeliveryRoutes { get; set; }
+        public DbSet<DeliveryRouteOrder> DeliveryRouteOrders { get; set; }
+
+
         public DbSet<OtpEntry> OtpEntries => Set<OtpEntry>();
 
 
