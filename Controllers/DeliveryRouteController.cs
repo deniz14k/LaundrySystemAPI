@@ -146,6 +146,27 @@ namespace ApiSpalatorie.Controllers
             return Ok(result);
         }
 
+        // în DeliveryRouteController
+
+        // DELETE: api/deliveryroute/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteRoute(int id)
+        {
+            var route = await _db.DeliveryRoutes
+                .Include(r => r.Orders)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            if (route == null) return NotFound();
+
+            // Șterge mai întâi legăturile
+            _db.DeliveryRouteOrders.RemoveRange(route.Orders);
+            _db.DeliveryRoutes.Remove(route);
+            await _db.SaveChangesAsync();
+
+            return NoContent(); // 204
+        }
+    
+
+
         // Helper: call Google Routes API to get optimized polyline
         private async Task<RouteResponse> ComputeRouteAsync(List<(double lat, double lng)> waypoints)
         {

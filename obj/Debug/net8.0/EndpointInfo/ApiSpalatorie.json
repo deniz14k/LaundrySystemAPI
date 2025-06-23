@@ -144,6 +144,27 @@
             "description": "Success"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "DeliveryRoute"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
       }
     },
     "/api/Orders/service-types": {
@@ -640,6 +661,37 @@
         }
       }
     },
+    "/api/Planner/auto-generate": {
+      "post": {
+        "tags": [
+          "Planner"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoGenerateRouteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoGenerateRouteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AutoGenerateRouteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Planner/route": {
       "get": {
         "tags": [
@@ -665,6 +717,20 @@
   },
   "components": {
     "schemas": {
+      "AutoGenerateRouteRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "driverName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateRouteRequest": {
         "type": "object",
         "properties": {

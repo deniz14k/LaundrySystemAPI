@@ -59,6 +59,22 @@
   },
   {
     "ContainingType": "ApiSpalatorie.Controllers.DeliveryRouteController",
+    "Method": "DeleteRoute",
+    "RelativePath": "api/DeliveryRoute/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiSpalatorie.Controllers.DeliveryRouteController",
     "Method": "MarkOrderAsCompleted",
     "RelativePath": "api/DeliveryRoute/{routeId}/complete/{orderId}",
     "HttpMethod": "PATCH",
@@ -348,6 +364,22 @@
       {
         "Name": "dto",
         "Type": "ApiSpalatorie.DTOs.OtpVerifyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ApiSpalatorie.Controllers.PlannerController",
+    "Method": "AutoGenerate",
+    "RelativePath": "api/Planner/auto-generate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "ApiSpalatorie.Controllers.AutoGenerateRouteRequest",
         "IsRequired": true
       }
     ],

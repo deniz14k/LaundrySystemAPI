@@ -1,12 +1,13 @@
-﻿using ApiSpalatorie.Models;
+﻿using ApiSpalatorie.Data;
+using ApiSpalatorie.Helpers;
+using ApiSpalatorie.Models;
+using ApiSpalatorie.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using ApiSpalatorie.Helpers;
-using ApiSpalatorie.Data;
 using System.Net.Http.Json;
-using ApiSpalatorie.Models.DTOs;
+using System.Text.Json;
 
 namespace ApiSpalatorie.Controllers
 {
@@ -24,29 +25,21 @@ namespace ApiSpalatorie.Controllers
             _maps = maps.Value;
         }
 
+        // Helper pentru Google Routes API
         private async Task<RouteResponse> GetOptimizedRoute(List<(double lat, double lng)> waypoints)
         {
-            var baseUrl = "https://routes.googleapis.com/directions/v2:computeRoutes";
-            var client = new HttpClient();
+            var url = "https://routes.googleapis.com/directions/v2:computeRoutes";
+            using var client = new HttpClient();
 
-            var origin = new
-            {
-                location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } }
-            };
-
-            var destination = new
-            {
-                location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } }
-            };
-
+            var origin = new { location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } } };
+            var destination = new { location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } } };
             var intermediates = waypoints.Count > 2
-                ? waypoints.Skip(1).SkipLast(1).Select(p => new
-                {
-                    location = new { latLng = new { latitude = p.lat, longitude = p.lng } }
-                }).ToList()
+                ? waypoints.Skip(1).SkipLast(1)
+                    .Select(p => new { location = new { latLng = new { latitude = p.lat, longitude = p.lng } } })
+                    .ToList()
                 : null;
 
-            var body = new
+            var payload = new
             {
                 origin,
                 destination,
@@ -59,82 +52,123 @@ namespace ApiSpalatorie.Controllers
             client.DefaultRequestHeaders.Add("X-Goog-Api-Key", _maps.ApiKey);
             client.DefaultRequestHeaders.Add("X-Goog-FieldMask", "*");
 
-            var response = await client.PostAsJsonAsync(baseUrl, body);
-            var rawContent = await response.Content.ReadAsStringAsync();
-
+            var response = await client.PostAsJsonAsync(url, payload);
+            var raw = await response.Content.ReadAsStringAsync();
             if (!response.IsSuccessStatusCode)
-            {
-                Console.WriteLine("❌ Google API ERROR:");
-                Console.WriteLine(rawContent);
-                throw new InvalidOperationException($"Google Maps API error: {rawContent}");
-            }
+                throw new InvalidOperationException($"Google API error: {raw}");
 
-            var result = await response.Content.ReadFromJsonAsync<RouteResponse>(new System.Text.Json.JsonSerializerOptions
+            return JsonSerializer.Deserialize<RouteResponse>(raw, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
-            });
-
-            return result!;
+            })!;
         }
 
-
+        /// <summary>
+        /// 1️⃣ Manual: creare rută pe comenzi selectate
+        /// POST api/planner/create-route
+        /// </summary>
         [HttpPost("create-route")]
         public async Task<IActionResult> CreateRoute([FromBody] CreateRouteRequest request)
         {
             if (request.OrderIds == null || request.OrderIds.Count < 2)
                 return BadRequest("At least two orders are required.");
 
-            // Verifică dacă vreuna din comenzi este deja într-o rută
-            var existingOrderIds = await _db.DeliveryRouteOrders
+            // verifică comenzi deja asignate
+            var used = await _db.DeliveryRouteOrders
                 .Where(o => request.OrderIds.Contains(o.OrderId))
                 .Select(o => o.OrderId)
                 .ToListAsync();
-
-            if (existingOrderIds.Any())
-                return BadRequest($"Orders already assigned to routes: {string.Join(", ", existingOrderIds)}");
+            if (used.Any())
+                return BadRequest($"Already in routes: {string.Join(',', used)}");
 
             var orders = await _db.Orders
                 .Where(o => request.OrderIds.Contains(o.Id))
                 .ToListAsync();
-
             if (orders.Count != request.OrderIds.Count)
-                return NotFound("Some orders were not found.");
+                return NotFound("Some orders not found.");
 
-            // Creează ruta
             var route = new DeliveryRoute
             {
-                CreatedAt = DateTime.Now,
+                CreatedAt = DateTime.UtcNow,
                 CreatedBy = User.Identity?.Name,
                 DriverName = request.DriverName
             };
-
             _db.DeliveryRoutes.Add(route);
-            await _db.SaveChangesAsync(); // avem nevoie de route.Id
+            await _db.SaveChangesAsync();
 
-            foreach (var order in orders)
+            // Persistare fără optimizare TSP (ordinea intrării)
+            for (int i = 0; i < orders.Count; i++)
             {
                 _db.DeliveryRouteOrders.Add(new DeliveryRouteOrder
                 {
                     DeliveryRouteId = route.Id,
-                    OrderId = order.Id,
-                    StopIndex = 0, // inițial
+                    OrderId = orders[i].Id,
+                    StopIndex = i + 1,
                     IsCompleted = false
                 });
             }
-
             await _db.SaveChangesAsync();
 
-            return Ok(new
-            {
-                route.Id,
-                route.DriverName,
-                Orders = orders.Select(o => o.Id)
-            });
+            return Ok(new { route.Id, route.DriverName });
         }
 
+        /// <summary>
+        /// 2️⃣ Auto: generare rută pentru o dată specifică
+        /// POST api/planner/auto-generate
+        /// </summary>
+        [HttpPost("auto-generate")]
+        public async Task<IActionResult> AutoGenerate([FromBody] AutoGenerateRouteRequest req)
+        {
+            // preia comenzile eligibile pentru acea dată
+            var orders = await _db.Orders
+                .Where(o => o.ReceivedDate.Date == req.Date.Date
+                            && o.ServiceType == "PickupDelivery"
+                            && !_db.DeliveryRouteOrders.Any(r => r.OrderId == o.Id))
+                .ToListAsync();
+            if (orders.Count < 2)
+                return BadRequest("Need at least 2 eligible orders.");
 
+            // coordonate pentru algoritm
+            var coords = orders.Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)).ToList();
 
-        // GET api/planner/route?date=2025-05-12
+            // optimizare TSP locală
+            var orderIdx = TspRouteOptimizer.SolveTsp(coords);
+            var ordered = orderIdx.Select(i => orders[i]).ToList();
+
+            // apel Google Routes doar pentru polyline
+            var routeResp = await GetOptimizedRoute(coords);
+            var encoded = routeResp.routes?.FirstOrDefault()?.polyline?.encodedPolyline;
+
+            // creare DeliveryRoute
+            var route = new DeliveryRoute
+            {
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = User.Identity?.Name,
+                DriverName = req.DriverName
+            };
+            _db.DeliveryRoutes.Add(route);
+            await _db.SaveChangesAsync();
+
+            // save ordine optimizate
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                _db.DeliveryRouteOrders.Add(new DeliveryRouteOrder
+                {
+                    DeliveryRouteId = route.Id,
+                    OrderId = ordered[i].Id,
+                    StopIndex = i + 1,
+                    IsCompleted = false
+                });
+            }
+            await _db.SaveChangesAsync();
+
+            return Ok(new { route.Id, polyline = encoded });
+        }
+
+        /// <summary>
+        /// 3️⃣ Preview rută pe hartă (fără salvare) pentru orice dată
+        /// GET api/planner/route?date=YYYY-MM-DD
+        /// </summary>
         [HttpGet("route")]
         public async Task<IActionResult> GetRoute(DateTime date)
         {
@@ -142,48 +176,41 @@ namespace ApiSpalatorie.Controllers
                 .Where(o => o.ReceivedDate.Date == date.Date && o.ServiceType == "PickupDelivery")
                 .OrderBy(o => o.DeliveryAddress)
                 .ToListAsync();
-
             if (orders.Count < 2)
                 return BadRequest("Need at least 2 addresses to create a route.");
 
-            // Step 1: Extract coordinates
             var coords = orders.Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)).ToList();
+            var idxs = TspRouteOptimizer.SolveTsp(coords);
+            var ordered = idxs.Select(i => orders[i]).ToList();
 
-            // Step 2: Solve TSP
-            var orderedIndexes = TspRouteOptimizer.SolveTsp(coords);
-            var orderedOrders = orderedIndexes.Select(i => orders[i]).ToList();
-
-            // Step 3: Rebuild ordered coord list
-            var orderedCoords = orderedOrders
-                .Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value))
-                .ToList();
-
-            // Step 4: Call Google route API
-            var routeData = await GetOptimizedRoute(orderedCoords);
+            var routeData = await GetOptimizedRoute(coords);
             var route = routeData.routes?.FirstOrDefault();
-
             if (route == null)
                 return BadRequest("No route found from Google Maps API.");
 
-            var totalPrice = orderedOrders.Sum(o => o.Items.Sum(i => i.Price));
-
-            // Step 5: Return full route + order info
+            var totalPrice = ordered.Sum(o => o.Items.Sum(i => i.Price));
             return Ok(new
             {
                 route,
                 totalPrice,
-                orders = orderedOrders.Select((o, i) => new
+                orders = ordered.Select((o, i) => new
                 {
                     index = i + 1,
+                    id = o.Id,
                     lat = o.DeliveryLatitude,
                     lng = o.DeliveryLongitude,
                     address = o.DeliveryAddress,
                     phone = o.TelephoneNumber,
-                    id = o.Id,
                     customer = o.CustomerId,
-                    price = o.Items.Sum(item => item.Price)
+                    price = o.Items.Sum(it => it.Price)
                 })
             });
         }
+    }
+
+    public class AutoGenerateRouteRequest
+    {
+        public DateTime Date { get; set; }
+        public string? DriverName { get; set; }
     }
 }
