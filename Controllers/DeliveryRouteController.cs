@@ -18,6 +18,7 @@ namespace ApiSpalatorie.Controllers
         private readonly ApplicationDbContext _db;
         private readonly GoogleMapsSettings _maps;
         private readonly HttpClient _httpClient;
+        private static readonly (double lat, double lng) Headquarters = (46.517151, 24.5223398);
 
         public DeliveryRouteController(ApplicationDbContext db, IOptions<GoogleMapsSettings> maps)
         {
@@ -112,17 +113,26 @@ namespace ApiSpalatorie.Controllers
             if (routeEntity == null)
                 return NotFound();
 
-            // Build coordinates list by StopIndex ascending
-            var orderedRouteOrders = routeEntity.Orders.OrderBy(ro => ro.StopIndex).ToList();
-            var coords = orderedRouteOrders
-                .Select(ro => (ro.Order.DeliveryLatitude!.Value, ro.Order.DeliveryLongitude!.Value))
+            // 2️⃣ Sortăm comenzile după StopIndex
+            var orderedRouteOrders = routeEntity.Orders
+                .OrderBy(ro => ro.StopIndex)
                 .ToList();
 
-            // Compute polyline via Google Routes API
-            var routeResponse = await ComputeRouteAsync(coords);
-            var encodedPolyline = routeResponse.routes?.FirstOrDefault()?.polyline?.encodedPolyline;
+            // 3️⃣ Construim lista de coordonate: HQ + opriri + HQ
+            var coords = new List<(double lat, double lng)> { Headquarters };
+            coords.AddRange(orderedRouteOrders
+                .Select(ro => (ro.Order.DeliveryLatitude!.Value, ro.Order.DeliveryLongitude!.Value)));
+            coords.Add(Headquarters);
 
-            // Prepare DTO
+            // 4️⃣ Apelăm Google Routes pentru polilinia completă
+            var routeResponse = await ComputeRouteAsync(coords);
+            var encodedPolyline = routeResponse
+                .routes?
+                .FirstOrDefault()?
+                .polyline?
+                .encodedPolyline;
+
+            // 5️⃣ Pregătim DTO-ul
             var result = new
             {
                 routeId = routeEntity.Id,
@@ -164,21 +174,16 @@ namespace ApiSpalatorie.Controllers
 
             return NoContent(); // 204
         }
-    
+
 
 
         // Helper: call Google Routes API to get optimized polyline
+        // 6️⃣ Helper: apel Google Routes API
         private async Task<RouteResponse> ComputeRouteAsync(List<(double lat, double lng)> waypoints)
         {
             var url = "https://routes.googleapis.com/directions/v2:computeRoutes";
-            var origin = new
-            {
-                location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } }
-            };
-            var destination = new
-            {
-                location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } }
-            };
+            var origin = new { location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } } };
+            var destination = new { location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } } };
             var intermediates = waypoints.Count > 2
                 ? waypoints.Skip(1).SkipLast(1)
                     .Select(p => new { location = new { latLng = new { latitude = p.lat, longitude = p.lng } } })
@@ -193,7 +198,9 @@ namespace ApiSpalatorie.Controllers
             var response = await _httpClient.PostAsJsonAsync(url, payload);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<RouteResponse>(
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            )!;
         }
+
     }
 }

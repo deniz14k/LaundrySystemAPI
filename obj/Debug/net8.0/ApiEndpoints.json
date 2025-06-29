@@ -379,7 +379,7 @@
     "Parameters": [
       {
         "Name": "req",
-        "Type": "ApiSpalatorie.Controllers.AutoGenerateRouteRequest",
+        "Type": "ApiSpalatorie.Controllers.PlannerController\u002BAutoGenerateRouteRequest",
         "IsRequired": true
       }
     ],

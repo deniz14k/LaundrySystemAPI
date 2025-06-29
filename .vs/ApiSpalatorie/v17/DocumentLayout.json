@@ -11,6 +11,14 @@
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\plannercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -38,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 232,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -47,6 +55,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-23T13:03:41.562Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "DeliveryRouteOrder.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\DeliveryRouteOrder.cs",
               "RelativeDocumentMoniker": "Models\\DeliveryRouteOrder.cs",
@@ -58,7 +78,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "CreateRouteRequest.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\DTOs\\CreateRouteRequest.cs",
               "RelativeDocumentMoniker": "DTOs\\CreateRouteRequest.cs",
@@ -70,7 +90,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "Order.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Models\\Order.cs",
@@ -88,7 +108,7 @@
               "RelativeDocumentMoniker": "Controllers\\PlannerController.cs",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\PlannerController.cs",
               "RelativeToolTip": "Controllers\\PlannerController.cs",
-              "ViewState": "AgIAAAsAAAAAznCaoLMbwNgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMUAAAAAAAAAAAAYwNoAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-16T18:27:25.562Z",
               "EditorCaption": ""
@@ -101,7 +121,7 @@
               "RelativeDocumentMoniker": "Controllers\\DeliveryRouteController.cs",
               "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\DeliveryRouteController.cs",
               "RelativeToolTip": "Controllers\\DeliveryRouteController.cs",
-              "ViewState": "AgIAAIsAAADAhpO6L48dwKYAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAowBQAAABgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-19T12:43:41.399Z",
               "EditorCaption": ""
@@ -109,6 +129,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "GoogleMapsSettings.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\GoogleMapsSettings.cs",
+              "RelativeDocumentMoniker": "Models\\GoogleMapsSettings.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\GoogleMapsSettings.cs",
+              "RelativeToolTip": "Models\\GoogleMapsSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-23T13:04:00.279Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "RouteResponseDtos.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\RouteResponseDtos.cs",
               "RelativeDocumentMoniker": "Models\\RouteResponseDtos.cs",
@@ -120,7 +152,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "ApplicationDbContext.cs",
               "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
