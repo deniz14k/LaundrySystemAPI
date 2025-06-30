@@ -133,55 +133,54 @@ namespace ApiSpalatorie.Controllers
         public async Task<IActionResult> GetRouteWithOrders(int id)
         {
             var routeEntity = await _db.DeliveryRoutes
-                .Include(r => r.Orders)
-                    .ThenInclude(ro => ro.Order)
+                .Include(r => r.Orders).ThenInclude(ro => ro.Order)
                 .FirstOrDefaultAsync(r => r.Id == id);
+            if (routeEntity == null) return NotFound();
 
-            if (routeEntity == null)
-                return NotFound();
-
-            // 2️⃣ Sortăm comenzile după StopIndex
+            // 1) pull out the stop coords in their saved StopIndex order
             var orderedRouteOrders = routeEntity.Orders
                 .OrderBy(ro => ro.StopIndex)
                 .ToList();
 
-            // 3️⃣ Construim lista de coordonate: HQ + opriri + HQ
-            var coords = new List<(double lat, double lng)> { Headquarters };
-            coords.AddRange(orderedRouteOrders
-                .Select(ro => (ro.Order.DeliveryLatitude!.Value, ro.Order.DeliveryLongitude!.Value)));
-            coords.Add(Headquarters);
+            // 2) build the raw coordinate list
+            var coords = orderedRouteOrders
+                .Select(ro => (ro.Order.DeliveryLatitude!.Value, ro.Order.DeliveryLongitude!.Value))
+                .ToList();
 
-            // 4️⃣ Apelăm Google Routes pentru polilinia completă
-            var routeResponse = await ComputeRouteAsync(coords);
-            var encodedPolyline = routeResponse
-                .routes?
-                .FirstOrDefault()?
-                .polyline?
-                .encodedPolyline;
+            // 3) **prepend** and **append** HQ
+            var waypoints = new List<(double lat, double lng)>();
+            waypoints.Add(Headquarters);
+            waypoints.AddRange(coords);
+            waypoints.Add(Headquarters);
 
-            // 5️⃣ Pregătim DTO-ul
-            var result = new
+            // 4) compute the polyline through HQ→stops→HQ
+            var routeResponse = await ComputeRouteAsync(waypoints);
+            var encoded = routeResponse.routes?.FirstOrDefault()?.polyline?.encodedPolyline;
+
+            // 5) project out the DTO you return to the React app
+            var ordersDto = orderedRouteOrders.Select(ro => new
+            {
+                id = ro.Order.Id,
+                index = ro.StopIndex,
+                address = ro.Order.DeliveryAddress,
+                customer = ro.Order.CustomerId,
+                phone = ro.Order.TelephoneNumber,
+                price = ro.Order.Items.Sum(i => i.Price),
+                lat = ro.Order.DeliveryLatitude,
+                lng = ro.Order.DeliveryLongitude,
+                isCompleted = ro.IsCompleted
+            });
+
+            return Ok(new
             {
                 routeId = routeEntity.Id,
+                polyline = encoded,
                 driverName = routeEntity.DriverName,
-                createdAt = routeEntity.CreatedAt,
-                polyline = encodedPolyline,
-                orders = orderedRouteOrders.Select(ro => new
-                {
-                    id = ro.Order.Id,
-                    index = ro.StopIndex,
-                    address = ro.Order.DeliveryAddress,
-                    customer = ro.Order.CustomerId,
-                    phone = ro.Order.TelephoneNumber,
-                    price = ro.Order.Items.Sum(i => i.Price),
-                    lat = ro.Order.DeliveryLatitude,
-                    lng = ro.Order.DeliveryLongitude,
-                    isCompleted = ro.IsCompleted
-                })
-            };
-
-            return Ok(result);
+                orders = ordersDto
+            });
         }
+
+
 
         // în DeliveryRouteController
 
@@ -206,28 +205,38 @@ namespace ApiSpalatorie.Controllers
 
         // Helper: call Google Routes API to get optimized polyline
         // 6️⃣ Helper: apel Google Routes API
-        private async Task<RouteResponse> ComputeRouteAsync(List<(double lat, double lng)> waypoints)
+        public async Task<RouteResponse> ComputeRouteAsync(List<(double lat, double lng)> waypoints)
         {
             var url = "https://routes.googleapis.com/directions/v2:computeRoutes";
+            // 1) adaugă HQ ca primul şi ultimul waypoint
             var origin = new { location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } } };
             var destination = new { location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } } };
             var intermediates = waypoints.Count > 2
-                ? waypoints.Skip(1).SkipLast(1)
-                    .Select(p => new { location = new { latLng = new { latitude = p.lat, longitude = p.lng } } })
-                    .ToList()
+                ? waypoints.Skip(1).SkipLast(1).Select(p => new { location = new { latLng = new { latitude = p.lat, longitude = p.lng } } }).ToList()
                 : null;
-            var payload = new { origin, destination, travelMode = "DRIVE", routingPreference = "TRAFFIC_AWARE", intermediates };
+
+            // 2) cere optimizarea waypoint-urilor
+            var payload = new
+            {
+                origin,
+                destination,
+                travelMode = "DRIVE",
+                routingPreference = "TRAFFIC_AWARE",
+                intermediates,
+                optimizeWaypointOrder = true
+            };
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _maps.ApiKey);
-            _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "*");
+            // dacă vrei doar polylines + ordine optimizată, poţi restrânge fieldmask-ul
+            _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", "routes.polyline.encodedPolyline,routes.optimizedIntermediateWaypointIndex");
 
             var response = await _httpClient.PostAsJsonAsync(url, payload);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<RouteResponse>(
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            )!;
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
+
 
     }
 }
