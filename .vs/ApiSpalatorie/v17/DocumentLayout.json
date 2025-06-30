@@ -1,42 +1,61 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\",
+  "WorkspaceRootPath": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\deliveryroutecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/LAPTOP_4EOTPMU1/AplicatieSpalatorii/True/SqlTable/dbo.DeliveryRoutes.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\controllers\\trackingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\trackingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\controllers\\deliveryroutecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\deliveryroutecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\controllers\\plannercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\plannercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\deliveryroute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\deliveryroute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\routetracking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\routetracking.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:controllers\\orderscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\dtos\\trackingreportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:dtos\\trackingreportdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\deliveryrouteorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\deliveryrouteorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\dtos\\createrouterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\dtos\\createrouterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:dtos\\createrouterequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\deliveryrouteorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\deliveryrouteorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\apispalatorie\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\googlemapssettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|c:\\users\\deniz\\source\\repos\\laundrysystemapi\\models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{EED4D0D1-49B4-4DFC-9BCE-0E15C747E436}|ApiSpalatorie.csproj|solutionrelative:models\\routeresponsedtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,7 +65,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 232,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -54,23 +73,122 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "dbo.DeliveryRoutes [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/LAPTOP_4EOTPMU1/AplicatieSpalatorii/True/SqlTable/dbo.DeliveryRoutes.sql",
+              "ToolTip": "dbo.DeliveryRoutes [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2025-06-30T19:47:21.346Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAABEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-06-23T13:03:41.562Z"
+              "Title": "DeliveryRoute.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\DeliveryRoute.cs",
+              "RelativeDocumentMoniker": "Models\\DeliveryRoute.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\DeliveryRoute.cs",
+              "RelativeToolTip": "Models\\DeliveryRoute.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T18:02:16.117Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "OrdersController.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\OrdersController.cs",
+              "RelativeDocumentMoniker": "Controllers\\OrdersController.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\OrdersController.cs",
+              "RelativeToolTip": "Controllers\\OrdersController.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAowGIAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T16:50:47.688Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RouteTracking.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\RouteTracking.cs",
+              "RelativeDocumentMoniker": "Models\\RouteTracking.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\RouteTracking.cs",
+              "RelativeToolTip": "Models\\RouteTracking.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T14:31:16.516Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TrackingController.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\TrackingController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TrackingController.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\TrackingController.cs",
+              "RelativeToolTip": "Controllers\\TrackingController.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA4AAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T14:38:09.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "DeliveryRouteController.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\DeliveryRouteController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DeliveryRouteController.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Controllers\\DeliveryRouteController.cs",
+              "RelativeToolTip": "Controllers\\DeliveryRouteController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T18:33:13.534Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "TrackingReportDto.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\DTOs\\TrackingReportDto.cs",
+              "RelativeDocumentMoniker": "DTOs\\TrackingReportDto.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\DTOs\\TrackingReportDto.cs",
+              "RelativeToolTip": "DTOs\\TrackingReportDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-30T14:35:33.381Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CreateRouteRequest.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\DTOs\\CreateRouteRequest.cs",
+              "RelativeDocumentMoniker": "DTOs\\CreateRouteRequest.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\DTOs\\CreateRouteRequest.cs",
+              "RelativeToolTip": "DTOs\\CreateRouteRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T13:06:30.35Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAcAAAAAQNBw0tTtvxYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-19T12:38:26.912Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "DeliveryRouteOrder.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\DeliveryRouteOrder.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\DeliveryRouteOrder.cs",
               "RelativeDocumentMoniker": "Models\\DeliveryRouteOrder.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\DeliveryRouteOrder.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\DeliveryRouteOrder.cs",
               "RelativeToolTip": "Models\\DeliveryRouteOrder.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -78,61 +196,35 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CreateRouteRequest.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\DTOs\\CreateRouteRequest.cs",
-              "RelativeDocumentMoniker": "DTOs\\CreateRouteRequest.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\DTOs\\CreateRouteRequest.cs",
-              "RelativeToolTip": "DTOs\\CreateRouteRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAA+AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-19T13:06:30.35Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "Order.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\Order.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\Order.cs",
               "RelativeDocumentMoniker": "Models\\Order.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\Order.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\Order.cs",
               "RelativeToolTip": "Models\\Order.cs",
-              "ViewState": "AgIAABIAAABg92VmZb0ywCUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAdl9mVtb7vyUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-19T12:26:16.731Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PlannerController.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\PlannerController.cs",
-              "RelativeDocumentMoniker": "Controllers\\PlannerController.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\PlannerController.cs",
-              "RelativeToolTip": "Controllers\\PlannerController.cs",
-              "ViewState": "AgIAAMUAAAAAAAAAAAAYwNoAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-16T18:27:25.562Z",
-              "EditorCaption": ""
+              "DocumentIndex": 11,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-23T13:03:41.562Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "DeliveryRouteController.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\DeliveryRouteController.cs",
-              "RelativeDocumentMoniker": "Controllers\\DeliveryRouteController.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Controllers\\DeliveryRouteController.cs",
-              "RelativeToolTip": "Controllers\\DeliveryRouteController.cs",
-              "ViewState": "AgIAAHIAAAAAAAAAAAAowBQAAABgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-19T12:43:41.399Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 12,
               "Title": "GoogleMapsSettings.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\GoogleMapsSettings.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\GoogleMapsSettings.cs",
               "RelativeDocumentMoniker": "Models\\GoogleMapsSettings.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\GoogleMapsSettings.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\GoogleMapsSettings.cs",
               "RelativeToolTip": "Models\\GoogleMapsSettings.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -140,27 +232,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 13,
               "Title": "RouteResponseDtos.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\RouteResponseDtos.cs",
+              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\RouteResponseDtos.cs",
               "RelativeDocumentMoniker": "Models\\RouteResponseDtos.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Models\\RouteResponseDtos.cs",
+              "ToolTip": "C:\\Users\\deniz\\source\\repos\\LaundrySystemAPI\\Models\\RouteResponseDtos.cs",
               "RelativeToolTip": "Models\\RouteResponseDtos.cs",
               "ViewState": "AgIAAAYAAACA9jhAWUIrwA4AAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-22T22:30:16.455Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Data\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\deniz\\source\\repos\\ApiSpalatorie\\Data\\ApplicationDbContext.cs",
-              "RelativeToolTip": "Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAAgAAAAAgoaTpu4zwBQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-19T12:38:26.912Z"
             }
           ]
         },

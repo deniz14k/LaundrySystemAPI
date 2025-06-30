@@ -26,7 +26,7 @@ namespace ApiSpalatorie.Controllers
         }
 
 
-        private readonly (double lat, double lng) Headquarters = (46.517151, 24.5223398);
+        private readonly (double lat, double lng) Headquarters = (46.7551903, 23.5665899);
 
         //  ————————————————
         //  Helper: call Google Routes API

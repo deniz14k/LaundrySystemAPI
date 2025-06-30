@@ -15,6 +15,9 @@ namespace ApiSpalatorie.Models
         public string? CreatedBy { get; set; }
 
         public string? DriverName { get; set; }
+       
+        public bool IsStarted { get; set; }
+
 
         public ICollection<DeliveryRouteOrder> Orders { get; set; } = new List<DeliveryRouteOrder>();
     }

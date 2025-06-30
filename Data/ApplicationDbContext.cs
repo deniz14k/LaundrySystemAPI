@@ -19,6 +19,7 @@ namespace ApiSpalatorie.Data
         public DbSet<DeliveryRoute> DeliveryRoutes { get; set; }
         public DbSet<DeliveryRouteOrder> DeliveryRouteOrders { get; set; }
 
+        public DbSet<RouteTracking> RouteTrackings { get; set; }
 
         public DbSet<OtpEntry> OtpEntries => Set<OtpEntry>();
 

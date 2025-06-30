@@ -18,7 +18,7 @@ namespace ApiSpalatorie.Controllers
         private readonly ApplicationDbContext _db;
         private readonly GoogleMapsSettings _maps;
         private readonly HttpClient _httpClient;
-        private static readonly (double lat, double lng) Headquarters = (46.517151, 24.5223398);
+        private static readonly (double lat, double lng) Headquarters = (46.7551903, 23.5665899);
 
         public DeliveryRouteController(ApplicationDbContext db, IOptions<GoogleMapsSettings> maps)
         {
@@ -26,6 +26,33 @@ namespace ApiSpalatorie.Controllers
             _maps = maps.Value;
             _httpClient = new HttpClient();
         }
+
+
+
+        [HttpPost("{id}/start")]
+        public async Task<IActionResult> StartRoute(int id)
+        {
+            var route = await _db.DeliveryRoutes.FindAsync(id);
+            if (route == null) return NotFound();
+            route.IsStarted = true;
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("{id}/stop")]
+        public async Task<IActionResult> StopRoute(int id)
+        {
+            var route = await _db.DeliveryRoutes.FindAsync(id);
+            if (route == null) return NotFound();
+            route.IsStarted = false;
+            await _db.SaveChangesAsync();
+            return Ok();
+        }
+
+
+
+
+
 
         // GET: api/deliveryroute
         [HttpGet]

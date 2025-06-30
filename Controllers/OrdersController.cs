@@ -63,44 +63,82 @@ namespace AplicatieSpalatorie.Api.Controllers
 
 
         // Allow only customers
+        // GET api/orders/my/{id}
         [Authorize(Roles = "Customer")]
         [HttpGet("my/{id}")]
-        public async Task<ActionResult<Order>> GetMyOrder(int id)
+        public async Task<IActionResult> GetMyOrder(int id)
         {
-            // Phone stored as NameIdentifier claim
             var phone = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(phone))
-                return Unauthorized();
+            if (string.IsNullOrEmpty(phone)) return Unauthorized();
 
-            // Only return if the order’s phone matches
+            // load the order + items
             var order = await _context.Orders
                 .Include(o => o.Items)
-                .FirstOrDefaultAsync(o => o.Id == id
-                                       && o.TelephoneNumber == phone);
+                .FirstOrDefaultAsync(o => o.Id == id && o.TelephoneNumber == phone);
+            if (order == null) return NotFound();
 
-            if (order == null)
-                return NotFound();
+            // try to find a DeliveryRouteOrder entry
+            var routeOrder = await _context.DeliveryRouteOrders
+                .Include(ro => ro.DeliveryRoute)
+                .FirstOrDefaultAsync(ro => ro.OrderId == id);
 
-            return Ok(order);
+            return Ok(new
+            {
+                // all your existing order fields...
+                order.Id,
+                order.Status,
+                order.ReceivedDate,
+                order.DeliveryAddress,
+                order.Items,
+                order.CompletedDate,
+
+                // **new**:
+                routeId = routeOrder?.DeliveryRouteId,
+                isRouteStarted = routeOrder?.DeliveryRoute.IsStarted ?? false
+            });
         }
-        
 
+        // GET api/orders/my
         [Authorize(Roles = "Customer")]
         [HttpGet("my")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetMyOrders()
+        public async Task<IActionResult> GetMyOrders()
         {
-            //The user’s phone number is now in the NameIdentifier claim
             var phone = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(phone))
-                return Unauthorized();
+            if (string.IsNullOrEmpty(phone)) return Unauthorized();
 
-            // Query your Orders table via the _context
             var orders = await _context.Orders
                 .Where(o => o.TelephoneNumber == phone)
                 .Include(o => o.Items)
                 .ToListAsync();
 
-            return Ok(orders);
+            // fetch links & routes in bulk
+            var links = await _context.DeliveryRouteOrders
+                .Where(ro => orders.Select(o => o.Id).Contains(ro.OrderId))
+                .ToListAsync();
+
+            var routeIds = links.Select(l => l.DeliveryRouteId).Distinct().ToList();
+            var routes = await _context.DeliveryRoutes
+                .Where(r => routeIds.Contains(r.Id))
+                .ToDictionaryAsync(r => r.Id, r => r.IsStarted);
+
+            var result = orders.Select(o => {
+                var link = links.FirstOrDefault(ro => ro.OrderId == o.Id);
+                var rid = link?.DeliveryRouteId;
+                return new
+                {
+                    o.Id,
+                    o.Status,
+                    o.ReceivedDate,
+                    o.DeliveryAddress,
+                    o.DeliveryLatitude,
+                    o.DeliveryLongitude,
+                    Items = o.Items,
+                    RouteId = rid,
+                    RouteStarted = rid.HasValue && routes.TryGetValue(rid.Value, out var started) && started
+                };
+            });
+
+            return Ok(result);
         }
 
 
