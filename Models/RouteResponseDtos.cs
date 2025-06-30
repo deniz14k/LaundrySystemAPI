@@ -20,6 +20,9 @@
         public string? routeToken { get; set; }
         public List<string>? routeLabels { get; set; }
         public PolylineDetails? polylineDetails { get; set; }
+
+        public List<int>? optimizedIntermediateWaypointIndex { get; set; }
+        
     }
 
     public class Leg

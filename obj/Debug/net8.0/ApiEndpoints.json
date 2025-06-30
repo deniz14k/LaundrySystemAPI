@@ -43,6 +43,32 @@
   },
   {
     "ContainingType": "ApiSpalatorie.Controllers.DeliveryRouteController",
+    "Method": "ComputeRouteAsync",
+    "RelativePath": "api/DeliveryRoute",
+    "HttpMethod": "",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "waypoints",
+        "Type": "System.Collections.Generic.List\u00601[[System.ValueTuple\u00602[[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Double, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "ApiSpalatorie.Models.RouteResponse",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "ApiSpalatorie.Controllers.DeliveryRouteController",
     "Method": "GetRouteWithOrders",
     "RelativePath": "api/DeliveryRoute/{id}",
     "HttpMethod": "GET",

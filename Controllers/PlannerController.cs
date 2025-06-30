@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 
 namespace ApiSpalatorie.Controllers
 {
@@ -26,11 +27,15 @@ namespace ApiSpalatorie.Controllers
         }
 
 
-        private readonly (double lat, double lng) Headquarters = (46.517151, 24.5223398);
+        private static readonly (double lat, double lng) Headquarters = (46.7551903, 23.5665899);
 
         //  ————————————————
         //  Helper: call Google Routes API
         //  ————————————————
+
+
+
+        /*
         private async Task<RouteResponse> GetOptimizedRoute(List<(double lat, double lng)> waypoints)
         {
             var url = "https://routes.googleapis.com/directions/v2:computeRoutes";
@@ -41,7 +46,7 @@ namespace ApiSpalatorie.Controllers
                 origin = new { location = new { latLng = new { latitude = waypoints.First().lat, longitude = waypoints.First().lng } } },
                 destination = new { location = new { latLng = new { latitude = waypoints.Last().lat, longitude = waypoints.Last().lng } } },
                 travelMode = "DRIVE",
-                routingPreference = "TRAFFIC_AWARE",
+                routingPreference = "TRAFFIC_AWARE_OPTIMAL",
                 intermediates = waypoints.Count > 2
                                   ? waypoints.Skip(1).SkipLast(1)
                                       .Select(p => new { location = new { latLng = new { latitude = p.lat, longitude = p.lng } } })
@@ -62,7 +67,7 @@ namespace ApiSpalatorie.Controllers
             {
                 PropertyNameCaseInsensitive = true
             })!;
-        }
+        } */
 
         //  ————————————————
         //  1️⃣ Manual: create route on chosen order IDs (no HQ)
@@ -111,6 +116,9 @@ namespace ApiSpalatorie.Controllers
             return Ok(new { route.Id, route.DriverName });
         }
 
+
+
+
         //  ————————————————
         //  2️⃣ Auto: generate & persist route for a specific date, including HQ start/end
         //  POST api/planner/auto-generate
@@ -118,29 +126,27 @@ namespace ApiSpalatorie.Controllers
         [HttpPost("auto-generate")]
         public async Task<IActionResult> AutoGenerate([FromBody] AutoGenerateRouteRequest req)
         {
+            // 1) preia comenzile eligibile
             var orders = await _db.Orders
                 .Where(o => o.ReceivedDate.Date == req.Date.Date
-                            && o.ServiceType == "PickupDelivery"
-                            && !_db.DeliveryRouteOrders.Any(r => r.OrderId == o.Id))
+                         && o.ServiceType == "PickupDelivery"
+                         && !_db.DeliveryRouteOrders.Any(r => r.OrderId == o.Id))
                 .ToListAsync();
 
             if (orders.Count < 2)
                 return BadRequest("Need at least 2 eligible orders.");
 
-            // HQ + stops + HQ
-            var coords = new List<(double lat, double lng)> { Headquarters };
-            coords.AddRange(orders.Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)));
-            coords.Add(Headquarters);
-
-            // optimize TSP local
-            var orderIdx = TspRouteOptimizer.SolveTsp(coords.Skip(1).SkipLast(1).ToList());
+            // 2) extrage coordonate și TSP local (dacă vrei)
+            var coords = orders.Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)).ToList();
+            var orderIdx = TspRouteOptimizer.SolveTsp(coords);
             var ordered = orderIdx.Select(i => orders[i]).ToList();
 
-            // Google polyline
-            var routeResp = await GetOptimizedRoute(coords);
+            // 3) apelează ComputeRouteAsync din DeliveryRouteController
+            var deliveryCtrl = new DeliveryRouteController(_db, Options.Create(_maps));
+            var routeResp = await deliveryCtrl.ComputeRouteAsync(coords);
             var encoded = routeResp.routes?.FirstOrDefault()?.polyline?.encodedPolyline;
 
-            // salvează DeliveryRoute + DeliveryRouteOrders
+            // 4) salvează DeliveryRoute + legături
             var route = new DeliveryRoute
             {
                 CreatedAt = DateTime.UtcNow,
@@ -162,8 +168,14 @@ namespace ApiSpalatorie.Controllers
             }
             await _db.SaveChangesAsync();
 
-            return Ok(new { route.Id, polyline = encoded });
+            // 5) returnează ID-ul și polilinia generată
+            return Ok(new
+            {
+                route.Id,
+                polyline = encoded
+            });
         }
+
 
 
         //  ————————————————
@@ -174,45 +186,43 @@ namespace ApiSpalatorie.Controllers
         public async Task<IActionResult> GetRoute(DateTime date)
         {
             var orders = await _db.Orders
-                .Where(o => o.ReceivedDate.Date == date.Date && o.ServiceType == "PickupDelivery")
+                .Where(o => o.ReceivedDate.Date == date.Date
+                         && o.ServiceType == "PickupDelivery")
                 .OrderBy(o => o.DeliveryAddress)
                 .ToListAsync();
 
             if (orders.Count < 1)
                 return BadRequest("Need at least 1 address to create a route.");
 
-            // 1. coordonate din comenzi
-            var coords = orders
-                .Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value))
-                .ToList();
-
-            // 2. punem HQ la început și la sfârșit
+            // 1️⃣ Build the waypoint list: HQ → each delivery → HQ
             var waypoints = new List<(double lat, double lng)> { Headquarters };
-            waypoints.AddRange(coords);
+            waypoints.AddRange(orders
+                .Select(o => (o.DeliveryLatitude!.Value, o.DeliveryLongitude!.Value)));
             waypoints.Add(Headquarters);
 
-            // 3. apel Google Routes
-            var routeData = await GetOptimizedRoute(waypoints);
-            var route = routeData.routes?.FirstOrDefault();
-            if (route == null)
+            // 2️⃣ Delegate to DeliveryRouteController.ComputeRouteAsync
+            var deliveryCtrl = new DeliveryRouteController(_db, Options.Create(_maps));
+            var routeResp = await deliveryCtrl.ComputeRouteAsync(waypoints);
+            var route = routeResp.routes?.FirstOrDefault();
+            if (route?.polyline?.encodedPolyline == null)
                 return BadRequest("No route found from Google Maps API.");
 
-            // 4. price & info
+            // 3️⃣ Build your response DTO
             var totalPrice = orders.Sum(o => o.Items.Sum(i => i.Price));
-            var dtoOrders = orders.Select((o, i) => new {
-                index = i + 1,
+            var dtoOrders = orders.Select((o, idx) => new {
+                index = idx + 1,
+                id = o.Id,
                 lat = o.DeliveryLatitude,
                 lng = o.DeliveryLongitude,
                 address = o.DeliveryAddress,
                 phone = o.TelephoneNumber,
-                id = o.Id,
                 customer = o.CustomerId,
                 price = o.Items.Sum(it => it.Price)
             });
 
             return Ok(new
             {
-                polyline = route.polyline!.encodedPolyline,
+                polyline = route.polyline.encodedPolyline,
                 totalPrice,
                 orders = dtoOrders
             });
