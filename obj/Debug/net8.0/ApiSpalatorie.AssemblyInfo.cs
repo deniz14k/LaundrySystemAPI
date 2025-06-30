@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ApiSpalatorie")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b505db3d1d8ea58efa14d56e8e6ec3963b38c42c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ae7c0277390f56edca7723bdae2779407364e3d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ApiSpalatorie")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ApiSpalatorie")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

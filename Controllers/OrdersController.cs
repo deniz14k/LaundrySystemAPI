@@ -64,37 +64,37 @@ namespace AplicatieSpalatorie.Api.Controllers
 
         // Allow only customers
         // GET api/orders/my/{id}
-        [Authorize(Roles = "Customer")]
         [HttpGet("my/{id}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> GetMyOrder(int id)
         {
             var phone = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(phone)) return Unauthorized();
 
-            // load the order + items
             var order = await _context.Orders
                 .Include(o => o.Items)
                 .FirstOrDefaultAsync(o => o.Id == id && o.TelephoneNumber == phone);
             if (order == null) return NotFound();
 
-            // try to find a DeliveryRouteOrder entry
             var routeOrder = await _context.DeliveryRouteOrders
                 .Include(ro => ro.DeliveryRoute)
                 .FirstOrDefaultAsync(ro => ro.OrderId == id);
 
             return Ok(new
             {
-                // all your existing order fields...
-                order.Id,
-                order.Status,
-                order.ReceivedDate,
-                order.DeliveryAddress,
-                order.Items,
-                order.CompletedDate,
+                id = order.Id,
+                status = order.Status,
+                receivedDate = order.ReceivedDate,
+                serviceType = order.ServiceType,
+                deliveryAddress = order.DeliveryAddress,
+                deliveryLatitude = order.DeliveryLatitude,
+                deliveryLongitude = order.DeliveryLongitude,
+                completedDate = order.CompletedDate,
+                items = order.Items,
 
-                // **new**:
+                // routing info:
                 routeId = routeOrder?.DeliveryRouteId,
-                isRouteStarted = routeOrder?.DeliveryRoute.IsStarted ?? false
+                routeStarted = routeOrder?.DeliveryRoute.IsStarted ?? false
             });
         }
 
